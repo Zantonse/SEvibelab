@@ -132,6 +132,9 @@
     <div class="fixed top-0 left-0 w-full h-1.5 bg-slate-200 z-50">
         <div id="global-progress" class="h-full bg-gradient-to-r from-okta-midnight to-okta-blue transition-all duration-500 ease-out" style="width: 0%"></div>
     </div>
+    <div id="progress-text" class="fixed top-2 right-2 z-50 text-[10px] font-bold text-okta-midnight bg-white/80 backdrop-blur px-2 py-1 rounded border border-slate-200 shadow-sm hidden">
+        0% Complete
+    </div>
 
     <!-- Toast Notification -->
     <div id="toast" class="fixed bottom-5 right-5 translate-y-20 opacity-0 transition-all duration-300 bg-okta-midnight text-white px-6 py-3 rounded-lg shadow-xl font-bold z-50 flex items-center gap-3">
@@ -140,7 +143,7 @@
     </div>
 
     <!-- Navigation -->
-    <nav class="sticky top-0 z-40 w-full glass-panel mt-1.5">
+    <nav id="main-nav" class="sticky top-0 z-40 w-full glass-panel mt-1.5 transition-transform duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo Area -->
@@ -288,23 +291,23 @@
                         <i class="fas fa-check-square text-green-500"></i> Phase 1: One-Shot Prototype – Checklist
                     </h4>
                     <div class="flex flex-col gap-2">
-                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" onclick="toggleCheck(this)">
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p1-step1" onclick="toggleCheck(this)">
                             <i class="far fa-square text-slate-300"></i>
                             <span class="text-xs font-medium text-okta-text">Open Gemini and enable Canvas</span>
                         </div>
-                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" onclick="toggleCheck(this)">
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p1-step2" onclick="toggleCheck(this)">
                             <i class="far fa-square text-slate-300"></i>
                             <span class="text-xs font-medium text-okta-text">Pick a scenario with arrows</span>
                         </div>
-                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" onclick="toggleCheck(this)">
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p1-step3" onclick="toggleCheck(this)">
                             <i class="far fa-square text-slate-300"></i>
                             <span class="text-xs font-medium text-okta-text">Paste Step 1 prompt → get HTML</span>
                         </div>
-                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" onclick="toggleCheck(this)">
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p1-step4" onclick="toggleCheck(this)">
                             <i class="far fa-square text-slate-300"></i>
                             <span class="text-xs font-medium text-okta-text">Paste Step 2 prompt → add interactivity</span>
                         </div>
-                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" onclick="toggleCheck(this)">
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p1-step5" onclick="toggleCheck(this)">
                             <i class="far fa-square text-slate-300"></i>
                             <span class="text-xs font-medium text-okta-text">Choose Option A or B for Step 3</span>
                         </div>
@@ -543,21 +546,25 @@
                         <i class="fas fa-check-square text-green-500"></i> Phase 2: Okta SE Toolkit – Checklist
                     </h4>
                     <div class="flex flex-col gap-2">
-                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" onclick="toggleCheck(this)">
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p2-step1" onclick="toggleCheck(this)">
                             <i class="far fa-square text-slate-300"></i>
                             <span class="text-xs font-medium text-okta-text">Run scaffolding command (okta-se-toolkit)</span>
                         </div>
-                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" onclick="toggleCheck(this)">
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p2-step2" onclick="toggleCheck(this)">
                             <i class="far fa-square text-slate-300"></i>
-                            <span class="text-xs font-medium text-okta-text">Prompt 1: Define Interfaces & Mock Scripts</span>
+                            <span class="text-xs font-medium text-okta-text">Prompt 1: Define Interfaces & Data</span>
                         </div>
-                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" onclick="toggleCheck(this)">
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p2-step3" onclick="toggleCheck(this)">
                             <i class="far fa-square text-slate-300"></i>
-                            <span class="text-xs font-medium text-okta-text">Prompt 2: Build Settings & Dashboard UI</span>
+                            <span class="text-xs font-medium text-okta-text">Prompt 2: Global State (Context & Layout)</span>
                         </div>
-                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" onclick="toggleCheck(this)">
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p2-step4" onclick="toggleCheck(this)">
                             <i class="far fa-square text-slate-300"></i>
-                            <span class="text-xs font-medium text-okta-text">Prompt 3: Wire Server Actions (The Logic)</span>
+                            <span class="text-xs font-medium text-okta-text">Prompt 3: Build Dashboard UI</span>
+                        </div>
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p2-step5" onclick="toggleCheck(this)">
+                            <i class="far fa-square text-slate-300"></i>
+                            <span class="text-xs font-medium text-okta-text">Prompt 4: Wire Server Actions</span>
                         </div>
                     </div>
                 </div>
@@ -677,39 +684,67 @@
                                 <span>Context & Interfaces</span>
                             </div>
                             <button onclick="copyToClipboard(this)" class="copy-btn bg-slate-700 hover:bg-slate-600 text-xs text-white px-2 py-1 rounded transition-colors">Copy</button>
-                            <pre><code id="prompt-step-2-1" class="language-markdown prompt-text">I am building an 'Okta SE Toolkit' App. I just ran the scaffolding command. My current file structure is:
-- `app/` (contains page.tsx, layout.tsx, globals.css)
-- `public/` (contains svgs)
-- `package.json`, `tsconfig.json`, `next.config.ts`
-- I am **NOT** using a `src/` directory.
+                            <pre><code id="prompt-step-2-1" class="language-markdown prompt-text">I am building an 'Okta SE Toolkit' App. I just ran the scaffolding command.
+Please create the following files with these specific structures:
 
-Create a TypeScript interface for `OktaConfig` (orgUrl, apiToken) and `AutomationScript` (id, name, description). Then, write a mock array of scripts including 'Enable FIDO2 Authenticator', 'Create Super Admins Group', 'Assign Super Admin Role', 'Update Admin Console Policy', 'Populate Demo Users', and 'Enable All Beta Features'.</code></pre>
+1. `app/types/okta.ts`: Export an interface `OktaConfig` (orgUrl, apiToken) and `AutomationScript` (id, name, description).
+2. `app/data/scripts.ts`: Export a constant array `SCRIPTS` containing exactly one script: 
+   - { id: 'populate_users', name: 'Populate Demo Users', description: 'Generates 50 random users with realistic profile attributes.' }
+
+Show me the code for these two files.</code></pre>
                         </div>
 
-                        <!-- Prompt 2 -->
+                        <!-- Prompt 2 (NEW: Global State) -->
                         <div class="code-block group bg-white p-4 rounded-lg border border-slate-200 relative shadow-soft">
                             <div class="flex justify-between text-xs text-okta-gray mb-1 uppercase font-bold tracking-wider">
-                                <span>02. Component Generation</span>
+                                <span>02. Global State</span>
+                                <span>Context & Layout</span>
+                            </div>
+                            <button onclick="copyToClipboard(this)" class="copy-btn bg-slate-700 hover:bg-slate-600 text-xs text-white px-2 py-1 rounded transition-colors">Copy</button>
+                            <pre><code id="prompt-step-2-2" class="language-markdown prompt-text">Now let's set up the state management.
+
+1. Create `app/components/OktaContext.tsx`:
+   - Use React Context to store the `OktaConfig` object.
+   - It should load/save to `localStorage` on mount/change so settings persist.
+   - Export a `useOkta` hook for easy access.
+
+2. Update `app/layout.tsx`:
+   - Import the `OktaProvider`.
+   - Wrap the children in the provider.
+   - Add a simple Navbar at the top with "Okta SE Toolkit" and a link to Home.</code></pre>
+                        </div>
+
+                        <!-- Prompt 3 (Renamed) -->
+                        <div class="code-block group bg-white p-4 rounded-lg border border-slate-200 relative shadow-soft">
+                            <div class="flex justify-between text-xs text-okta-gray mb-1 uppercase font-bold tracking-wider">
+                                <span>03. Component Generation</span>
                                 <span>Settings & UI</span>
                             </div>
                             <button onclick="copyToClipboard(this)" class="copy-btn bg-slate-700 hover:bg-slate-600 text-xs text-white px-2 py-1 rounded transition-colors">Copy</button>
-                            <pre><code id="prompt-step-2-2" class="language-markdown prompt-text">Create a `SettingsPanel` component (suggest creating a new folder `app/components` for this) that allows the SE to input their Okta Org URL and API Token. Save these to a React Context or localStorage. Style it to look clean and professional, like the Okta Admin Dashboard.</code></pre>
+                            <pre><code id="prompt-step-2-3" class="language-markdown prompt-text">Now let's build the UI components.
+
+1. `app/components/SettingsPanel.tsx`: A form to input Org URL and API Token. It should use `useOkta` to update the global context.
+2. `app/components/ScriptCard.tsx`: A component that takes a `script` prop. It should have a "Run" button. When clicked, it should call the server action (we will create this next).
+3. `app/page.tsx`: Render the `SettingsPanel` at the top. Below it, map through the `SCRIPTS` array and render a `ScriptCard` for each.</code></pre>
                         </div>
 
-                        <!-- Prompt 3 -->
+                        <!-- Prompt 4 (Renamed) -->
                         <div class="code-block group bg-white p-4 rounded-lg border border-slate-200 relative shadow-soft">
                             <div class="flex justify-between text-xs text-okta-gray mb-1 uppercase font-bold tracking-wider">
-                                <span>03. Logic Glue</span>
+                                <span>04. Logic Glue</span>
                                 <span>Okta API Integration</span>
                             </div>
                             <button onclick="copyToClipboard(this)" class="copy-btn bg-slate-700 hover:bg-slate-600 text-xs text-white px-2 py-1 rounded transition-colors">Copy</button>
-                            <pre><code id="prompt-step-2-3" class="language-markdown prompt-text">Now, write the logic for the scripts using Next.js Server Actions: 
-1. Enable FIDO2/WebAuthn via the authenticators API. 
-2. Create a "Super Administrators" group. 
-3. Assign the "SUPER_ADMIN" role to that group.
-4. Update the "Okta Admin Console" app's authentication policy.
-5. Hydrate 50 demo users with realistic data. Ensure strict consistency: Titles must align with Departments.
-6. Fetch all available feature flags via the Features API and enable them all to maximize tenant capabilities.</code></pre>
+                            <pre><code id="prompt-step-2-4" class="language-markdown prompt-text">Now, write the logic for the "Populate Demo Users" script.
+
+1. Create `app/actions/oktaActions.ts`.
+2. Export a Server Action named `runScript` that takes `scriptId` and `config`.
+3. If the scriptId is 'populate_users':
+   - Loop 50 times.
+   - Generate a fake user profile (First Name, Last Name, Email, Login).
+   - Send a POST request to `${config.orgUrl}/api/v1/users?activate=true` with the profile data.
+   - Use the `Authorization: SSWS ${config.apiToken}` header.
+4. Return a success message with the count of created users.</code></pre>
                         </div>
 
                     </div>
@@ -997,23 +1032,23 @@ Create a TypeScript interface for `OktaConfig` (orgUrl, apiToken) and `Automatio
                         <i class="fas fa-check-square text-green-500"></i> Phase 3: Cursor Workflow – Checklist
                     </h4>
                     <div class="flex flex-col gap-2">
-                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" onclick="toggleCheck(this)">
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p3-step1" onclick="toggleCheck(this)">
                             <i class="far fa-square text-slate-300"></i>
                             <span class="text-xs font-medium text-okta-text">Create a NEW folder (e.g., <code>okta-cursor-lab</code>) & Run scaffold command</span>
                         </div>
-                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" onclick="toggleCheck(this)">
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p3-step2" onclick="toggleCheck(this)">
                             <i class="far fa-square text-slate-300"></i>
                             <span class="text-xs font-medium text-okta-text">Open Cursor & Hit <strong>Cmd + I</strong> (Composer)</span>
                         </div>
-                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" onclick="toggleCheck(this)">
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p3-step3" onclick="toggleCheck(this)">
                             <i class="far fa-square text-slate-300"></i>
                             <span class="text-xs font-medium text-okta-text">Paste <strong>Super Prompt 1</strong> (Infrastructure) → Accept All</span>
                         </div>
-                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" onclick="toggleCheck(this)">
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p3-step4" onclick="toggleCheck(this)">
                             <i class="far fa-square text-slate-300"></i>
                             <span class="text-xs font-medium text-okta-text">Paste <strong>Super Prompt 2</strong> (Logic & UI) → Accept All</span>
                         </div>
-                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" onclick="toggleCheck(this)">
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p3-step5" onclick="toggleCheck(this)">
                             <i class="far fa-square text-slate-300"></i>
                             <span class="text-xs font-medium text-okta-text">Verify at localhost:3000 (Notice how much faster that was?)</span>
                         </div>
@@ -1464,6 +1499,34 @@ Please scaffold the core infrastructure:
             checked: 0
         };
 
+        // Load progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem('vibeLabProgress');
+            if (saved) {
+                const checkedIds = JSON.parse(saved);
+                document.querySelectorAll('.checklist-item').forEach(item => {
+                    const id = item.getAttribute('data-id');
+                    if (id && checkedIds.includes(id)) {
+                        item.classList.add('checked');
+                        const icon = item.querySelector('i');
+                        icon.classList.remove('far', 'fa-square');
+                        icon.classList.add('fas', 'fa-check-square');
+                    }
+                });
+            }
+            updateGlobalProgress();
+        }
+
+        // Save progress to localStorage
+        function saveProgress() {
+            const checkedItems = [];
+            document.querySelectorAll('.checklist-item.checked').forEach(item => {
+                const id = item.getAttribute('data-id');
+                if (id) checkedItems.push(id);
+            });
+            localStorage.setItem('vibeLabProgress', JSON.stringify(checkedItems));
+        }
+
         function updateGlobalProgress() {
             // Count all checkboxes in main view
             const mainView = document.getElementById('main-view');
@@ -1472,9 +1535,14 @@ Please scaffold the core infrastructure:
             
             const progress = allCheckboxes.length > 0 ? (checkedBoxes.length / allCheckboxes.length) * 100 : 0;
             const bar = document.getElementById('global-progress');
+            const text = document.getElementById('progress-text');
             
             if(bar) {
                 bar.style.width = `${progress}%`;
+            }
+            if(text) {
+                text.innerText = `${Math.round(progress)}% Complete`;
+                if(progress > 0) text.classList.remove('hidden');
             }
         }
 
@@ -1527,8 +1595,8 @@ Please scaffold the core infrastructure:
             // Initial highlight
             Prism.highlightAll();
             
-            // Initialize progress
-            updateGlobalProgress();
+            // Load Saved Progress
+            loadProgress();
         });
 
         // Toggle Views Function
@@ -1537,6 +1605,7 @@ Please scaffold the core infrastructure:
             const prereqs = document.getElementById('prereqs-view');
             const concepts = document.getElementById('concepts-view');
             const progressStrip = document.getElementById('progress-strip');
+            const mainNav = document.getElementById('main-nav');
             
             if (!main || !prereqs || !concepts) return;
 
@@ -1549,14 +1618,17 @@ Please scaffold the core infrastructure:
             if (viewId === 'prereqs') {
                 prereqs.classList.remove('hidden');
                 if(progressStrip) progressStrip.classList.add('hidden'); 
+                if(mainNav) mainNav.classList.add('hidden'); // Hide main nav for focus
                 window.scrollTo(0, 0);
             } else if (viewId === 'concepts') {
                 concepts.classList.remove('hidden');
                 if(progressStrip) progressStrip.classList.add('hidden');
+                if(mainNav) mainNav.classList.add('hidden'); // Hide main nav for focus
                 window.scrollTo(0, 0);
             } else {
                 main.classList.remove('hidden');
                 if(progressStrip) progressStrip.classList.remove('hidden');
+                if(mainNav) mainNav.classList.remove('hidden'); // Show main nav
                 if (scrollTargetId) {
                     setTimeout(() => {
                         const el = document.getElementById(scrollTargetId);
@@ -1634,7 +1706,8 @@ Please scaffold the core infrastructure:
                 icon.classList.remove('fas', 'fa-check-square');
                 icon.classList.add('far', 'fa-square');
             }
-            updateGlobalProgress(); // Update bar on toggle
+            saveProgress(); // Save to localStorage
+            updateGlobalProgress(); // Update bar
         }
 
         // Bridge Lesson Tabs
