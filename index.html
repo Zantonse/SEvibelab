@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Okta Vibe Coding Lab</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Prism.js for Syntax Highlighting (Theme: Tomorrow Night) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        okta: {
+                            midnight: '#00297A', // Primary Navy
+                            blue: '#3C71F7',     // Action Blue
+                            ice: '#F5F6F8',      // Page Background
+                            white: '#FFFFFF',
+                            text: '#1D1D21',     // Main Text
+                            gray: '#696969'      // Subtext
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px rgba(0, 0, 0, 0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Okta-style Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F5F6F8; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+        
+        .code-block {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.5rem;
+        }
+        
+        /* Prism Overrides for rounded corners */
+        pre[class*="language-"] {
+            margin: 0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .copy-btn {
+            opacity: 0;
+            transition: opacity 0.2s;
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            z-index: 10;
+        }
+        
+        .code-block:hover .copy-btn {
+            opacity: 1;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+
+        /* Subtle Aura Gradient Animation */
+        .aura-text {
+            background: linear-gradient(90deg, #00297A, #3C71F7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Checkbox interactions */
+        .checklist-item.checked i {
+            color: #10b981; /* Green */
+        }
+        .checklist-item.checked span {
+            text-decoration: line-through;
+            color: #94a3b8;
+        }
+        
+        /* Details Summary Styles */
+        details > summary {
+            list-style: none;
+        }
+        details > summary::-webkit-details-marker {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-okta-ice text-okta-text font-sans antialiased selection:bg-okta-blue selection:text-white">
+
+    <!-- Global Progress Bar -->
+    <div class="fixed top-0 left-0 w-full h-1.5 bg-slate-200 z-50">
+        <div id="global-progress" class="h-full bg-gradient-to-r from-okta-midnight to-okta-blue transition-all duration-500 ease-out" style="width: 0%"></div>
+    </div>
+    <div id="progress-text" class="fixed top-2 right-2 z-50 text-[10px] font-bold text-okta-midnight bg-white/80 backdrop-blur px-2 py-1 rounded border border-slate-200 shadow-sm hidden">
+        0% Complete
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 translate-y-20 opacity-0 transition-all duration-300 bg-okta-midnight text-white px-6 py-3 rounded-lg shadow-xl font-bold z-50 flex items-center gap-3">
+        <i class="fas fa-check-circle text-okta-blue"></i> 
+        <span>Copied to clipboard</span>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="main-nav" class="sticky top-0 z-40 w-full glass-panel mt-1.5 transition-transform duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo Area -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="toggleView('main')">
+                    <!-- Simple CSS Circle representing the 'O' -->
+                    <div class="w-8 h-8 rounded-full border-[6px] border-okta-midnight"></div>
+                    <span class="font-bold text-xl tracking-tight text-okta-midnight">SE Vibe Coding <span class="text-okta-blue">Lab</span></span>
+                </div>
+                
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-2">
+                        <button onclick="toggleView('main', 'phase1')" class="text-okta-gray hover:text-okta-midnight hover:bg-slate-100 px-3 py-2 rounded-md text-sm font-semibold transition-colors">Phase 1</button>
+                        <button onclick="toggleView('main', 'phase2')" class="text-okta-gray hover:text-okta-midnight hover:bg-slate-100 px-3 py-2 rounded-md text-sm font-semibold transition-colors">Phase 2</button>
+                        <button onclick="toggleView('main', 'phase3')" class="text-okta-gray hover:text-okta-midnight hover:bg-slate-100 px-3 py-2 rounded-md text-sm font-semibold transition-colors">Phase 3</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Progress Strip (Contextual) -->
+        <div id="progress-strip" class="w-full bg-slate-50 border-b border-slate-200 py-1 transition-all duration-300">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center text-xs font-mono font-medium text-okta-gray">
+                <span class="mr-2">YOU'RE HERE:</span>
+                <span id="prog-1" class="text-okta-blue">① Canvas Prototype</span>
+                <span class="mx-2 text-slate-300">→</span>
+                <span id="prog-2" class="text-slate-400">② Next.js App</span>
+                <span class="mx-2 text-slate-300">→</span>
+                <span id="prog-3" class="text-slate-400">③ Cursor Demo</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- VIEW: Main Content -->
+    <div id="main-view">
+        <!-- Hero Section -->
+        <div class="relative overflow-hidden bg-white border-b border-slate-200">
+            <!-- Cool Tech Banner Background -->
+            <div class="absolute inset-0">
+                <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop" alt="Abstract Tech Banner" class="w-full h-full object-cover">
+                <!-- Gradient Overlay for Readability -->
+                <div class="absolute inset-0 bg-gradient-to-b from-white/90 via-white/80 to-white/95"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-white/80 via-transparent to-white/80"></div>
+            </div>
+            
+            <div class="relative max-w-7xl mx-auto py-24 px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
+                <span class="inline-block py-1 px-3 rounded-full bg-blue-50/80 backdrop-blur-sm text-okta-midnight text-xs font-bold tracking-wider uppercase mb-6 border border-blue-100">
+                    Engineering Enablement
+                </span>
+                <h1 class="text-4xl md:text-6xl font-extrabold text-okta-midnight tracking-tight mb-6 leading-tight">
+                    Prompt-Driven <span class="text-okta-blue">Development</span>
+                </h1>
+                <p class="mt-4 max-w-2xl text-xl text-slate-600 leading-relaxed font-medium">
+                    Move from manual syntax writing to "Architect & Verify". <br>
+                    Accelerate your workflow securely with AI.
+                </p>
+                <div class="mt-10 flex gap-6">
+                    <button onclick="toggleView('prereqs')" class="bg-white/90 backdrop-blur-sm text-okta-midnight px-8 py-4 rounded-lg font-bold hover:bg-slate-50 hover:shadow-lg transition-all border border-slate-300 shadow-md text-lg transform hover:-translate-y-0.5 duration-200">
+                        Prerequisites
+                    </button>
+                    <button onclick="toggleView('concepts')" class="bg-white/90 backdrop-blur-sm text-okta-blue px-8 py-4 rounded-lg font-bold hover:bg-slate-50 hover:shadow-lg transition-all border border-slate-300 shadow-md flex items-center gap-3 text-lg transform hover:-translate-y-0.5 duration-200">
+                        <i class="fas fa-book-open"></i> Concepts
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Wrapper -->
+        <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">
+
+            <!-- Executive Summary (Collapsible Left, Static Right) -->
+            <section id="executive-summary" class="scroll-mt-24">
+                <div class="bg-white rounded-2xl p-1 border border-slate-200 shadow-soft overflow-hidden">
+                    <div class="bg-slate-50 p-4 border-b border-slate-200 flex items-center gap-2">
+                        <i class="fas fa-lightbulb text-okta-blue"></i>
+                        <h2 class="text-lg font-bold text-okta-midnight">Executive Summary</h2>
+                    </div>
+                    
+                    <div class="p-6 grid md:grid-cols-2 gap-6">
+                        <!-- Left Col: Definition (Collapsible) -->
+                        <details class="group bg-white rounded-xl border border-slate-200 open:border-okta-blue open:ring-1 open:ring-okta-blue/20 transition-all duration-200" open>
+                            <summary class="flex justify-between items-center p-4 cursor-pointer font-bold text-okta-midnight hover:bg-slate-50 rounded-xl">
+                                <span>What is Vibe Coding?</span>
+                                <i class="fas fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform"></i>
+                            </summary>
+                            <div class="px-4 pb-4 text-okta-gray text-sm leading-relaxed">
+                                Vibe Coding is the art of prompting your way to a working prototype. For Sales Engineers, it means shifting from "I need to find a developer" to "I just built it." You describe the outcome—the customer's brand, the specific authentication flow, the exact dashboard they want to see—and let AI handle the syntax.
+                                <br><br>
+                                It transforms you from a technical presenter into a real-time solutions architect, enabling you to build custom, high-fidelity demos at the speed of conversation.
+                            </div>
+                        </details>
+
+                        <!-- Right Col: Why It Matters (Static & Expanded) -->
+                        <div class="bg-blue-50/50 rounded-xl border border-blue-100 p-6">
+                            <h3 class="font-bold text-okta-midnight mb-4 flex items-center gap-2">
+                                <i class="fas fa-trophy text-yellow-500"></i> Why it Matters for Okta SEs
+                            </h3>
+                            <ul class="space-y-4">
+                                <li class="flex items-start gap-3">
+                                    <div class="w-6 h-6 rounded-full bg-okta-blue text-white flex items-center justify-center flex-shrink-0 text-xs"><i class="fas fa-rocket"></i></div>
+                                    <div>
+                                        <span class="font-bold text-okta-midnight block text-xs">Win with Customization</span>
+                                        <span class="text-xs text-okta-gray">Instantly build branded login pages creating an emotional hook.</span>
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <div class="w-6 h-6 rounded-full bg-purple-500 text-white flex items-center justify-center flex-shrink-0 text-xs"><i class="fas fa-plug"></i></div>
+                                    <div>
+                                        <span class="font-bold text-okta-midnight block text-xs">Bridge the Dev Gap</span>
+                                        <span class="text-xs text-okta-gray">Generate working code for OIDC, SCIM, or Hooks on the fly.</span>
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <div class="w-6 h-6 rounded-full bg-green-500 text-white flex items-center justify-center flex-shrink-0 text-xs"><i class="fas fa-tachometer-alt"></i></div>
+                                    <div>
+                                        <span class="font-bold text-okta-midnight block text-xs">POC Velocity</span>
+                                        <span class="text-xs text-okta-gray">Automate tenant setup (users, groups) to focus on selling.</span>
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <div class="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center flex-shrink-0 text-xs"><i class="fas fa-handshake"></i></div>
+                                    <div>
+                                        <span class="font-bold text-okta-midnight block text-xs">Instant Credibility</span>
+                                        <span class="text-xs text-okta-gray">Speak the language of developers (React, APIs, Tokens) confidently.</span>
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <div class="w-6 h-6 rounded-full bg-pink-500 text-white flex items-center justify-center flex-shrink-0 text-xs"><i class="fas fa-random"></i></div>
+                                    <div>
+                                        <span class="font-bold text-okta-midnight block text-xs">Adaptive Storytelling</span>
+                                        <span class="text-xs text-okta-gray">Pivot your demo live when a prospect mentions a new pain point.</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Phase 1 -->
+            <section id="phase1" class="relative scroll-mt-24">
+                
+                <!-- Phase 1 Checklist -->
+                <div class="mb-8 p-4 bg-white rounded-xl border border-slate-200 shadow-soft">
+                    <h4 class="text-sm font-bold text-okta-midnight mb-3 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fas fa-check-square text-green-500"></i> Phase 1: One-Shot Prototype – Checklist
+                    </h4>
+                    <div class="flex flex-col gap-2">
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p1-step1" onclick="toggleCheck(this)">
+                            <i class="far fa-square text-slate-300"></i>
+                            <span class="text-xs font-medium text-okta-text">Open Gemini and enable Canvas</span>
+                        </div>
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p1-step2" onclick="toggleCheck(this)">
+                            <i class="far fa-square text-slate-300"></i>
+                            <span class="text-xs font-medium text-okta-text">Pick a scenario with arrows</span>
+                        </div>
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p1-step3" onclick="toggleCheck(this)">
+                            <i class="far fa-square text-slate-300"></i>
+                            <span class="text-xs font-medium text-okta-text">Paste Step 1 prompt → get HTML</span>
+                        </div>
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p1-step4" onclick="toggleCheck(this)">
+                            <i class="far fa-square text-slate-300"></i>
+                            <span class="text-xs font-medium text-okta-text">Paste Step 2 prompt → add interactivity</span>
+                        </div>
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p1-step5" onclick="toggleCheck(this)">
+                            <i class="far fa-square text-slate-300"></i>
+                            <span class="text-xs font-medium text-okta-text">Choose Option A or B for Step 3</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="order-2 md:order-1">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-okta-blue text-white flex items-center justify-center text-xl font-bold shadow-md">1</div>
+                            <h2 class="text-3xl font-bold text-okta-midnight">The "One-Shot" Prototype</h2>
+                        </div>
+                        
+                        <!-- Scenario Switcher Controls -->
+                        <div class="flex items-center justify-between bg-white rounded-lg p-3 mb-6 border border-slate-200 shadow-soft">
+                            <button onclick="changeScenario(-1)" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 text-okta-blue transition-colors">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <div class="text-center">
+                                <span id="scenario-label" class="text-xs uppercase tracking-wider text-okta-gray font-bold block">Scenario 1 of 3</span>
+                                <span id="scenario-title" class="text-okta-midnight font-bold text-sm">Late Night Noodle Verse (Ramen Shop)</span>
+                            </div>
+                            <button onclick="changeScenario(1)" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 text-okta-blue transition-colors">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+
+                        <p id="scenario-desc" class="text-okta-gray mb-6 text-sm italic border-l-4 border-okta-blue pl-4 bg-blue-50 py-2 rounded-r">
+                            Design vibe: Dark, moody, neon accents. Focus on visuals.
+                        </p>
+                        
+                        <div class="space-y-6">
+                            <!-- Step 0 -->
+                            <div class="bg-blue-50 p-6 rounded-xl border border-blue-100 shadow-sm">
+                                <h3 class="text-lg font-bold text-okta-midnight mb-2 flex items-center gap-2">
+                                    <i class="fas fa-wrench text-okta-blue"></i> Step 0: Setup
+                                </h3>
+                                <p class="text-sm text-okta-gray mb-3">
+                                    Before we begin, we need to activate our workspace.
+                                </p>
+                                <ul class="list-disc list-inside text-sm text-okta-gray space-y-1 ml-1">
+                                    <li>Open Gemini</li>
+                                    <li>Go to <strong>Tools</strong> (usually in the sidebar or settings)</li>
+                                    <li>Add/Enable the <strong>Canvas</strong> tool</li>
+                                </ul>
+                            </div>
+
+                            <!-- Step 1 -->
+                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-soft transition-all duration-300 hover:border-okta-blue/50">
+                                <h3 class="text-lg font-bold text-okta-midnight mb-2 flex items-center gap-2">
+                                    <i class="fas fa-terminal text-okta-blue"></i> Step 1: Initial Prompt
+                                </h3>
+                                <p class="text-sm text-okta-gray mb-3">
+                                    Copy this into Gemini to create the base application.
+                                </p>
+                                <div class="code-block bg-slate-900 group shadow-inner">
+                                    <button onclick="copyToClipboard(this)" class="copy-btn bg-slate-700 hover:bg-slate-600 text-xs text-white px-2 py-1 rounded transition-colors">Copy</button>
+                                    <pre><code id="prompt-step-1" class="language-markdown prompt-text">Write a single-file HTML landing page for a trendy Ramen shop called 'Late Night Noodle Verse'. Include a Hero section with a large background image, a 'Menu' grid with hover effects, and a functioning 'Reservation' form. Use Tailwind CSS for styling. Design vibe: Dark, moody, neon accents.</code></pre>
+                                </div>
+                            </div>
+
+                            <!-- Step 2 -->
+                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-soft transition-all duration-300 hover:border-okta-blue/50">
+                                <h3 class="text-lg font-bold text-okta-midnight mb-2 flex items-center gap-2">
+                                    <i class="fas fa-sync-alt text-okta-blue"></i> Step 2: Iteration
+                                </h3>
+                                <p class="text-sm text-okta-gray mb-3">If the UI is static, ask for interactive features.</p>
+                                <div class="code-block bg-slate-900 group shadow-inner">
+                                    <button onclick="copyToClipboard(this)" class="copy-btn bg-slate-700 hover:bg-slate-600 text-xs text-white px-2 py-1 rounded transition-colors">Copy</button>
+                                    <pre><code id="prompt-step-2" class="language-markdown prompt-text">The menu feels static. Add an interactive 'Ramen Configurator' section where users can toggle toppings (Egg, Chashu, Nori) which updates a live 'Estimated Price'. Also, ensure the Reservation form saves the user's name to localStorage so it says 'Welcome back, [Name]' on refresh.</code></pre>
+                                </div>
+                            </div>
+
+                            <!-- Step 3 (Split Paths) -->
+                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-soft transition-all duration-300 hover:border-okta-blue/50">
+                                <div class="mb-4">
+                                    <h3 class="text-lg font-bold text-okta-midnight mb-2 flex items-center gap-2">
+                                        <i class="fas fa-code-branch text-okta-blue"></i> Step 3: Choose Your Path
+                                    </h3>
+                                    <p class="text-sm text-okta-gray">Select the challenge that fits your learning goal:</p>
+                                </div>
+
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <!-- Option A: API Pivot -->
+                                    <div class="p-4 bg-slate-50 rounded-lg border border-slate-100 flex flex-col">
+                                        <div class="text-xs font-bold text-okta-blue uppercase mb-2 flex items-center gap-2">
+                                            <i class="fas fa-network-wired"></i> Option A: API Pivot
+                                        </div>
+                                        <p class="text-xs text-okta-gray mb-3 flex-grow">Bridge the gap between static frontend and dynamic backend.</p>
+                                        <div class="code-block bg-slate-900 relative group">
+                                            <button onclick="copyToClipboard(this)" class="copy-btn bg-slate-700 hover:bg-slate-600 text-xs text-white px-2 py-1 rounded transition-colors">Copy</button>
+                                            <pre><code id="prompt-step-3-a" class="language-markdown prompt-text">Replace the static customer reviews with real data fetched from 'https://randomuser.me/api/?results=3'. Use the user's picture, name, and generate a fake 5-star review for each.</code></pre>
+                                        </div>
+                                    </div>
+
+                                    <!-- Option B: Brand Takeover -->
+                                    <div class="p-4 bg-slate-50 rounded-lg border border-slate-100 flex flex-col">
+                                        <div class="text-xs font-bold text-purple-600 uppercase mb-2 flex items-center gap-2">
+                                            <i class="fas fa-paint-roller"></i> Option B: Brand Takeover
+                                        </div>
+                                        <p class="text-xs text-okta-gray mb-3 flex-grow">The ultimate SE hack: Rebrand the demo for a prospect.</p>
+                                        <div class="code-block bg-slate-900 relative group">
+                                            <button onclick="copyToClipboard(this)" class="copy-btn bg-slate-700 hover:bg-slate-600 text-xs text-white px-2 py-1 rounded transition-colors">Copy</button>
+                                            <pre><code id="prompt-step-3-b" class="language-markdown prompt-text">I'm pitching this to a high-end French investor. Rebrand the site to look like a luxury bistro. Use a gold/white color scheme (#D4AF37), elegant serif fonts, and remove the neon effects.</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="order-1 md:order-2 relative">
+                        <div class="relative rounded-xl shadow-2xl overflow-hidden border border-slate-200 bg-slate-900">
+                            <!-- Code Editor UI Mockup -->
+                            <div class="bg-slate-800 px-4 py-2 flex items-center gap-2 border-b border-slate-700">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            </div>
+                            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80" alt="Code on Screen" class="w-full opacity-80">
+                        </div>
+                        <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-lg border border-slate-200 shadow-xl hidden md:block">
+                            <p class="text-xs text-okta-blue uppercase font-bold tracking-wider mb-1">Facilitator Note</p>
+                            <p class="text-sm text-okta-text font-medium">Use the arrows to select a <br> scenario that fits your team.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Divider -->
+            <div class="w-full h-px bg-slate-200"></div>
+
+            <!-- INTERLUDE: The Bridge Lesson (Tabs) -->
+            <section id="bridge-lesson" class="scroll-mt-24">
+                <div class="bg-indigo-900 rounded-2xl p-8 border border-indigo-700 shadow-xl text-white relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-12 opacity-10"><i class="fas fa-random text-9xl"></i></div>
+
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center font-bold shadow-lg">
+                                <i class="fas fa-graduation-cap text-white"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold">Lesson: The Bridge to VS Code</h2>
+                        </div>
+
+                        <!-- Tab Controls -->
+                        <div class="flex gap-4 border-b border-indigo-700 mb-6">
+                            <button onclick="switchTab('tab-workflow')" id="btn-workflow" class="pb-2 px-4 text-sm font-bold border-b-2 border-green-400 text-white transition-colors">The Vibe Workflow</button>
+                            <button onclick="switchTab('tab-api')" id="btn-api" class="pb-2 px-4 text-sm font-bold border-b-2 border-transparent text-indigo-300 hover:text-white transition-colors">The API Integration Rule</button>
+                        </div>
+
+                        <!-- Tab Content: Workflow -->
+                        <div id="tab-workflow" class="grid md:grid-cols-2 gap-12">
+                            <div>
+                                <h3 class="font-bold text-indigo-200 mb-4">How to move from Prototype to Production</h3>
+                                <ol class="space-y-6 relative border-l-2 border-indigo-700 ml-3 pl-8">
+                                    <li class="relative">
+                                        <span class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-indigo-500 border-2 border-indigo-900"></span>
+                                        <strong class="block text-lg mb-1">1. Architect in Canvas</strong>
+                                        <span class="text-indigo-300 text-sm leading-relaxed block">Don't struggle with syntax in VS Code. Use Gemini Canvas to generate the logic, UI components, and TypeScript interfaces first where it's cheap to iterate.</span>
+                                    </li>
+                                    <li class="relative">
+                                        <span class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-indigo-500 border-2 border-indigo-900"></span>
+                                        <strong class="block text-lg mb-1">2. Transplant to VS Code</strong>
+                                        <span class="text-indigo-300 text-sm leading-relaxed block">Copy the polished code block. Navigate to your project folder (e.g., <code class="bg-indigo-800 px-1 rounded text-xs font-mono">app/components/</code>) and paste it into a real file. This "locks in" the feature.</span>
+                                    </li>
+                                </ol>
+                            </div>
+                            <div class="flex items-center justify-center opacity-50">
+                                <i class="fas fa-laptop-code text-9xl text-indigo-800"></i>
+                            </div>
+                        </div>
+
+                        <!-- Tab Content: API Rule -->
+                        <div id="tab-api" class="hidden">
+                            <div class="bg-indigo-950/50 p-6 rounded-xl border border-indigo-800">
+                                <h3 class="font-bold text-indigo-200 mb-4 flex items-center gap-2">
+                                    <i class="fas fa-shield-alt text-green-400"></i> Why can't I just fetch() in the browser?
+                                </h3>
+                                
+                                <div class="space-y-6">
+                                    <!-- Concept 1: The CORS Guard -->
+                                    <div>
+                                        <h4 class="text-white font-bold text-sm mb-2">1. The Browser's Security Guard (CORS)</h4>
+                                        <p class="text-sm text-indigo-300 leading-relaxed mb-2">
+                                            Browsers enforce a strict rule called <strong>Same-Origin Policy</strong>. If your app is on <code>localhost:3000</code> and tries to talk to <code>okta.com</code>, the browser sees a stranger and blocks the call to prevent data theft.
+                                        </p>
+                                        <div class="bg-black/40 p-3 rounded-lg border border-red-900/50 font-mono text-xs text-red-300">
+                                            🚫 Blocked: Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource.
+                                        </div>
+                                    </div>
+
+                                    <!-- Concept 2: The Glass House -->
+                                    <div>
+                                        <h4 class="text-white font-bold text-sm mb-2">2. The "Glass House" Problem</h4>
+                                        <p class="text-sm text-indigo-300 leading-relaxed">
+                                            Anything running in the browser (Client Components) is visible to the user. If you put your <code>API_TOKEN</code> in a standard React component, any user can right-click "View Source" and steal your Super Admin credentials. <strong>Never do this.</strong>
+                                        </p>
+                                    </div>
+
+                                    <!-- Concept 3: The Server Solution -->
+                                    <div>
+                                        <h4 class="text-white font-bold text-sm mb-2">3. The Solution: Server Actions</h4>
+                                        <p class="text-sm text-indigo-300 leading-relaxed mb-3">
+                                            We use Next.js <strong>Server Actions</strong> to act as a secure proxy.
+                                        </p>
+                                        <ul class="space-y-2">
+                                            <li class="flex items-start gap-3 text-xs text-indigo-200 bg-indigo-900/50 p-2 rounded">
+                                                <i class="fas fa-check-circle text-green-400 mt-0.5"></i>
+                                                <span><strong>Browser talks to Server:</strong> Your frontend asks your <em>own</em> Next.js server to "Create User". This is allowed (Same Origin).</span>
+                                            </li>
+                                            <li class="flex items-start gap-3 text-xs text-indigo-200 bg-indigo-900/50 p-2 rounded">
+                                                <i class="fas fa-check-circle text-green-400 mt-0.5"></i>
+                                                <span><strong>Server talks to Okta:</strong> Your Next.js server (running in a secure backend) uses the hidden API Token to call Okta. Servers don't have CORS restrictions.</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Phase 2 -->
+            <section id="phase2" class="scroll-mt-24">
+                <div class="mb-12 text-center">
+                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-okta-midnight text-xl font-bold mb-4 shadow-sm">2</div>
+                    <h2 class="text-3xl font-bold text-okta-midnight">The System Architect</h2>
+                    <p class="text-okta-gray mt-2 font-medium">VS Code + Next.js App Router</p>
+                </div>
+
+                <!-- Phase 2 Checklist -->
+                <div class="mb-8 p-4 bg-white rounded-xl border border-slate-200 shadow-soft">
+                    <h4 class="text-sm font-bold text-okta-midnight mb-3 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fas fa-check-square text-green-500"></i> Phase 2: Okta SE Toolkit – Checklist
+                    </h4>
+                    <div class="flex flex-col gap-2">
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p2-step1" onclick="toggleCheck(this)">
+                            <i class="far fa-square text-slate-300"></i>
+                            <span class="text-xs font-medium text-okta-text">Run scaffolding command (okta-se-toolkit)</span>
+                        </div>
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p2-step2" onclick="toggleCheck(this)">
+                            <i class="far fa-square text-slate-300"></i>
+                            <span class="text-xs font-medium text-okta-text">Prompt 1: Define Interfaces & Data</span>
+                        </div>
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p2-step3" onclick="toggleCheck(this)">
+                            <i class="far fa-square text-slate-300"></i>
+                            <span class="text-xs font-medium text-okta-text">Prompt 2: Global State (Context & Layout)</span>
+                        </div>
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p2-step4" onclick="toggleCheck(this)">
+                            <i class="far fa-square text-slate-300"></i>
+                            <span class="text-xs font-medium text-okta-text">Prompt 3: Build Dashboard UI</span>
+                        </div>
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p2-step5" onclick="toggleCheck(this)">
+                            <i class="far fa-square text-slate-300"></i>
+                            <span class="text-xs font-medium text-okta-text">Prompt 4: Wire Server Actions</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Safety Note -->
+                <div class="mb-10 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r shadow-sm">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-triangle text-yellow-600 mt-0.5"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-bold text-yellow-800">⚠️ Demo Safety Note</h3>
+                            <div class="mt-1 text-xs text-yellow-700">
+                                <p>Only run these scripts in demo / non-production tenants.</p>
+                                <p class="mt-1">Avoid <strong>SUPER_ADMIN</strong> patterns in real customer environments. Always adhere to least privilege principles.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- What We Are Building Section -->
+                <div class="mb-10 bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-okta-midnight mb-4 flex items-center gap-2">
+                        <i class="fas fa-tools text-okta-blue"></i> What We Are Building: The Okta SE Toolkit
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div class="space-y-3">
+                            <p class="text-sm text-okta-gray leading-relaxed">
+                                You will build a <strong>"Demo Command Center"</strong>—a custom Next.js web application that connects to your specific Okta tenant. Instead of clicking through 50 screens to set up a POC, you will have a dashboard with "Easy Buttons" to automate the work.
+                            </p>
+                            <ul class="space-y-2 text-sm">
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                    <span class="text-okta-text"><strong>Secure Configuration:</strong> Input and store your Org URL and API Token.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                    <span class="text-okta-text"><strong>Automation Library:</strong> One-click scripts to enable FIDO2, hydrate users, and create Admin groups.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                    <span class="text-okta-text"><strong>API Integration:</strong> Real-time calls to the Okta Management API using Server Actions.</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-50 rounded-lg p-4 border border-slate-100 flex flex-col gap-2 opacity-80 select-none">
+                            <!-- Mini Mockup -->
+                            <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-2">
+                                <div class="flex gap-1">
+                                    <div class="w-2 h-2 rounded-full bg-slate-300"></div>
+                                    <div class="w-16 h-2 rounded-full bg-slate-200"></div>
+                                </div>
+                                <div class="w-4 h-4 rounded-full bg-slate-200"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="h-16 bg-white rounded border border-slate-200 flex flex-col items-center justify-center gap-1">
+                                    <div class="w-6 h-6 rounded bg-blue-100"></div>
+                                    <div class="w-12 h-2 rounded bg-slate-100"></div>
+                                </div>
+                                <div class="h-16 bg-white rounded border border-slate-200 flex flex-col items-center justify-center gap-1">
+                                    <div class="w-6 h-6 rounded bg-purple-100"></div>
+                                    <div class="w-12 h-2 rounded bg-slate-100"></div>
+                                </div>
+                            </div>
+                            <div class="h-8 bg-slate-800 rounded mt-1 flex items-center px-2">
+                                <div class="w-2 h-2 rounded-full bg-green-400 mr-2"></div>
+                                <div class="w-24 h-1 rounded bg-slate-600"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Col 1: Setup -->
+                    <div id="setup" class="md:col-span-1 space-y-4">
+                        <!-- Step 0 Card -->
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 shadow-sm">
+                            <h4 class="font-bold text-okta-midnight mb-2 text-sm flex items-center gap-2">
+                                <i class="fas fa-folder-open text-okta-blue"></i> Step 0: VS Code Prep
+                            </h4>
+                            <ol class="list-decimal list-inside text-xs text-okta-gray space-y-1">
+                                <li>Open <strong>VS Code</strong></li>
+                                <li>Go to <strong>File > Open Folder...</strong></li>
+                                <li>Navigate to <strong>Documents</strong></li>
+                                <li>Create new folder: <code class="bg-white px-1 rounded text-okta-midnight font-bold">OktaAutomations</code></li>
+                                <li>Select and Open that folder</li>
+                            </ol>
+                        </div>
+
+                        <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 font-mono text-xs shadow-inner text-slate-200 group relative">
+                            <button onclick="copyToClipboard(this)" class="copy-btn bg-slate-700 hover:bg-slate-600 text-xs text-white px-2 py-1 rounded transition-colors">Copy</button>
+                            <p class="text-slate-400 mb-2"># Terminal Setup (Ctrl+`)</p>
+                            <div class="select-all prompt-text">
+                                <span class="text-okta-blue">npx</span> create-next-app@latest okta-se-toolkit --typescript --tailwind --eslint --app --no-src-dir && <span class="text-okta-blue">cd</span> okta-se-toolkit && <span class="text-okta-blue">npm</span> run dev
+                            </div>
+                            
+                            <!-- Wizard Answers -->
+                            <div class="mt-4 pt-3 border-t border-slate-700">
+                                <p class="text-green-400 mb-2 font-semibold text-[10px] uppercase">Flags Used</p>
+                                <ul class="space-y-1 text-slate-400 text-[10px]">
+                                    <li>--typescript (Types Safety)</li>
+                                    <li>--tailwind (Styling)</li>
+                                    <li>--app (App Router)</li>
+                                    <li>--no-src-dir (Simpler Structure)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Col 2: Prompts -->
+                    <div class="md:col-span-2 space-y-6">
+                        
+                        <!-- Prompt 1 -->
+                        <div class="code-block group bg-white p-4 rounded-lg border border-slate-200 relative shadow-soft">
+                            <div class="flex justify-between text-xs text-okta-gray mb-1 uppercase font-bold tracking-wider">
+                                <span>01. Data Structure</span>
+                                <span>Context & Interfaces</span>
+                            </div>
+                            <button onclick="copyToClipboard(this)" class="copy-btn bg-slate-700 hover:bg-slate-600 text-xs text-white px-2 py-1 rounded transition-colors">Copy</button>
+                            <pre><code id="prompt-step-2-1" class="language-markdown prompt-text">I am building an 'Okta SE Toolkit' App. I just ran the scaffolding command.
+Please create the following files with these specific structures:
+
+1. `app/types/okta.ts`: Export an interface `OktaConfig` (orgUrl, apiToken) and `AutomationScript` (id, name, description).
+2. `app/data/scripts.ts`: Export a constant array `SCRIPTS` containing exactly one script: 
+   - { id: 'populate_users', name: 'Populate Demo Users', description: 'Generates 50 random users with realistic profile attributes.' }
+
+Show me the code for these two files.</code></pre>
+                        </div>
+
+                        <!-- Prompt 2 (NEW: Global State) -->
+                        <div class="code-block group bg-white p-4 rounded-lg border border-slate-200 relative shadow-soft">
+                            <div class="flex justify-between text-xs text-okta-gray mb-1 uppercase font-bold tracking-wider">
+                                <span>02. Global State</span>
+                                <span>Context & Layout</span>
+                            </div>
+                            <button onclick="copyToClipboard(this)" class="copy-btn bg-slate-700 hover:bg-slate-600 text-xs text-white px-2 py-1 rounded transition-colors">Copy</button>
+                            <pre><code id="prompt-step-2-2" class="language-markdown prompt-text">Now let's set up the state management.
+
+1. Create `app/components/OktaContext.tsx`:
+   - Use React Context to store the `OktaConfig` object.
+   - It should load/save to `localStorage` on mount/change so settings persist.
+   - Export a `useOkta` hook for easy access.
+
+2. Update `app/layout.tsx`:
+   - Import the `OktaProvider`.
+   - Wrap the children in the provider.
+   - Add a simple Navbar at the top with "Okta SE Toolkit" and a link to Home.</code></pre>
+                        </div>
+
+                        <!-- Prompt 3 (Renamed) -->
+                        <div class="code-block group bg-white p-4 rounded-lg border border-slate-200 relative shadow-soft">
+                            <div class="flex justify-between text-xs text-okta-gray mb-1 uppercase font-bold tracking-wider">
+                                <span>03. Component Generation</span>
+                                <span>Settings & UI</span>
+                            </div>
+                            <button onclick="copyToClipboard(this)" class="copy-btn bg-slate-700 hover:bg-slate-600 text-xs text-white px-2 py-1 rounded transition-colors">Copy</button>
+                            <pre><code id="prompt-step-2-3" class="language-markdown prompt-text">Now let's build the UI components.
+
+1. `app/components/SettingsPanel.tsx`: A form to input Org URL and API Token. It should use `useOkta` to update the global context.
+2. `app/components/ScriptCard.tsx`: A component that takes a `script` prop. It should have a "Run" button. When clicked, it should call the server action (we will create this next).
+3. `app/page.tsx`: Render the `SettingsPanel` at the top. Below it, map through the `SCRIPTS` array and render a `ScriptCard` for each.</code></pre>
+                        </div>
+
+                        <!-- Prompt 4 (Renamed) -->
+                        <div class="code-block group bg-white p-4 rounded-lg border border-slate-200 relative shadow-soft">
+                            <div class="flex justify-between text-xs text-okta-gray mb-1 uppercase font-bold tracking-wider">
+                                <span>04. Logic Glue</span>
+                                <span>Okta API Integration</span>
+                            </div>
+                            <button onclick="copyToClipboard(this)" class="copy-btn bg-slate-700 hover:bg-slate-600 text-xs text-white px-2 py-1 rounded transition-colors">Copy</button>
+                            <pre><code id="prompt-step-2-4" class="language-markdown prompt-text">Now, write the logic for the "Populate Demo Users" script.
+
+1. Create `app/actions/oktaActions.ts`.
+2. Export a Server Action named `runScript` that takes `scriptId` and `config`.
+3. If the scriptId is 'populate_users':
+   - Loop 50 times.
+   - Generate a fake user profile (First Name, Last Name, Email, Login).
+   - Send a POST request to `${config.orgUrl}/api/v1/users?activate=true` with the profile data.
+   - Use the `Authorization: SSWS ${config.apiToken}` header.
+4. Return a success message with the count of created users.</code></pre>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- Divider -->
+            <div class="w-full h-px bg-slate-200"></div>
+
+            <!-- INTERLUDE: The Vibe Lifecycle -->
+            <section id="workflow-lesson" class="scroll-mt-24">
+                <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-soft">
+                    <div class="flex items-center gap-3 mb-8">
+                        <div class="w-10 h-10 rounded-full bg-okta-midnight flex items-center justify-center shadow-md">
+                            <i class="fas fa-sync-alt text-white text-lg"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-okta-midnight">Lesson: The Vibe Lifecycle</h2>
+                    </div>
+
+                    <div class="grid md:grid-cols-4 gap-6 relative">
+                        <!-- Connecting Line (Desktop) -->
+                        <div class="hidden md:block absolute top-12 left-0 w-full h-1 bg-slate-100 -z-10 transform -translate-y-1/2"></div>
+
+                        <!-- Step 1 -->
+                        <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm text-center relative hover:-translate-y-1 transition-transform duration-300">
+                            <div class="w-12 h-12 rounded-full bg-blue-50 text-okta-blue flex items-center justify-center text-xl font-bold mx-auto mb-4 border-4 border-white shadow-sm">
+                                <i class="fas fa-comment-dots"></i>
+                            </div>
+                            <h3 class="font-bold text-okta-midnight mb-2">1. Define</h3>
+                            <p class="text-xs text-okta-gray">"The Prompt is the Spec"</p>
+                            <p class="text-xs text-slate-400 mt-2">Don't write code. Write the outcome. Be specific about behavior and style.</p>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm text-center relative hover:-translate-y-1 transition-transform duration-300">
+                            <div class="w-12 h-12 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-xl font-bold mx-auto mb-4 border-4 border-white shadow-sm">
+                                <i class="fas fa-magic"></i>
+                            </div>
+                            <h3 class="font-bold text-okta-midnight mb-2">2. Generate</h3>
+                            <p class="text-xs text-okta-gray">"AI is the Junior Dev"</p>
+                            <p class="text-xs text-slate-400 mt-2">Let the LLM draft the heavy lifting. It handles the boilerplate and syntax.</p>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm text-center relative hover:-translate-y-1 transition-transform duration-300">
+                            <div class="w-12 h-12 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center text-xl font-bold mx-auto mb-4 border-4 border-white shadow-sm">
+                                <i class="fas fa-clipboard-check"></i>
+                            </div>
+                            <h3 class="font-bold text-okta-midnight mb-2">3. Verify</h3>
+                            <p class="text-xs text-okta-gray">"You are the Senior Reviewer"</p>
+                            <p class="text-xs text-slate-400 mt-2">Test the code. Does it match the prompt? Is the UI broken? Does the API call fail?</p>
+                        </div>
+
+                        <!-- Step 4 -->
+                        <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm text-center relative hover:-translate-y-1 transition-transform duration-300">
+                            <div class="w-12 h-12 rounded-full bg-green-50 text-green-500 flex items-center justify-center text-xl font-bold mx-auto mb-4 border-4 border-white shadow-sm">
+                                <i class="fas fa-tools"></i>
+                            </div>
+                            <h3 class="font-bold text-okta-midnight mb-2">4. Refine</h3>
+                            <p class="text-xs text-okta-gray">"Feedback Loops"</p>
+                            <p class="text-xs text-slate-400 mt-2">Paste errors back into the prompt. Ask for styling tweaks. Iterate until it vibes.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Divider -->
+            <div class="w-full h-px bg-slate-200"></div>
+
+            <!-- INTERLUDE: The Cursor Lesson -->
+            <section id="cursor-lesson" class="scroll-mt-24">
+                <div class="bg-purple-900 rounded-2xl p-8 border border-purple-700 shadow-xl text-white relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-12 opacity-10">
+                        <i class="fas fa-bolt text-9xl"></i>
+                    </div>
+
+                    <div class="relative z-10 space-y-8">
+                        <!-- Header -->
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center font-bold shadow-lg">
+                                <i class="fas fa-mouse-pointer text-white"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold">Lesson: The Cursor Advantage</h2>
+                                <p class="text-xs text-purple-200 mt-1">
+                                    Rebuild the <span class="font-semibold">Okta User Generator</span> from Phase 2 in a fraction of the time.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-3 gap-8">
+                            <!-- Column 1: Mental Model -->
+                            <div class="space-y-4 md:col-span-1">
+                                <h3 class="font-bold text-purple-200 mb-1 text-sm">1. Mental Model: Tourist vs. Resident</h3>
+
+                                <div class="bg-purple-950/50 p-4 rounded-lg border border-purple-800 text-xs space-y-3">
+                                    <div>
+                                        <h4 class="font-bold text-red-300 mb-1 flex items-center gap-2">
+                                            <i class="fas fa-times-circle"></i> Web Chat (ChatGPT / Gemini)
+                                        </h4>
+                                        <p class="text-purple-300">
+                                            A <span class="font-semibold">Tourist</span> – it only sees what you paste. It can’t reliably know your
+                                            folder structure, local types, or imports. Great for exploring ideas, weaker for editing a real project.
+                                        </p>
+                                    </div>
+                                    <div class="border-t border-purple-800 pt-3">
+                                        <h4 class="font-bold text-green-400 mb-1 flex items-center gap-2">
+                                            <i class="fas fa-check-circle"></i> Cursor (Inside Your Repo)
+                                        </h4>
+                                        <p class="text-purple-300">
+                                            A <span class="font-semibold">Resident</span> – it scans your entire codebase. It knows about
+                                            <code class="bg-purple-800 px-1 rounded font-mono">app/types/okta.ts</code>,
+                                            <code class="bg-purple-800 px-1 rounded font-mono">app/actions/userActions.ts</code>, and your components.
+                                            When you say “update the User Generator,” it edits the right file.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-purple-950/60 p-3 rounded-lg border border-purple-800 text-xs">
+                                    <p class="text-purple-200 font-semibold mb-1 uppercase tracking-wider">
+                                        Goal of Lab 3
+                                    </p>
+                                    <p class="text-purple-300">
+                                        Take the <strong>same app</strong> from Phase 2 and rebuild it using
+                                        <strong>2–3 Composer prompts</strong> instead of manually pasting code between chat and VS Code.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Column 2: Hands-On Steps -->
+                            <div class="space-y-4 md:col-span-1">
+                                <h3 class="font-bold text-purple-200 text-sm mb-1">2. Hands-On: The Composer Flow</h3>
+
+                                <!-- Step List -->
+                                <ol class="space-y-4 text-xs text-purple-100">
+                                    <li class="bg-purple-950/40 p-3 rounded-lg border border-purple-800">
+                                        <p class="font-semibold mb-1">
+                                            Step 0 – Open the Project in Cursor
+                                        </p>
+                                        <ul class="list-disc list-inside space-y-1 text-purple-200">
+                                            <li>Open <strong>Cursor</strong> instead of VS Code.</li>
+                                            <li>Go to <code class="bg-purple-800 px-1 rounded font-mono">File &gt; Open...</code> and select your
+                                                <code class="bg-purple-800 px-1 rounded font-mono">okta-cursor-lab</code> folder.</li>
+                                            <li>Confirm you see <code class="bg-purple-800 px-1 rounded font-mono">app/</code> and
+                                                <code class="bg-purple-800 px-1 rounded font-mono">package.json</code> in the sidebar.</li>
+                                        </ul>
+                                    </li>
+
+                                    <li class="bg-purple-950/40 p-3 rounded-lg border border-purple-800">
+                                        <p class="font-semibold mb-1">
+                                            Step 1 – Tell Composer the Big Picture
+                                        </p>
+                                        <p class="mb-1 text-purple-300">
+                                            Hit <kbd class="bg-purple-800 px-2 py-0.5 rounded font-mono">Cmd + I</kbd> from any file to open
+                                            <strong>Composer</strong>.
+                                        </p>
+                                        <p class="mb-1 text-purple-300">
+                                            Use a <strong>system-level prompt</strong> like:
+                                        </p>
+                                        <div class="bg-black/40 p-2 rounded border border-purple-700 font-mono">
+                                            <p class="text-[11px]">
+                                                &ldquo;You are a Principal Engineer helping me build an 'Okta User Generator' app in this repo.
+                                                Read the existing files first. Keep TypeScript and Tailwind. Prefer creating new files under
+                                                <code>app/</code> instead of inlining everything.&rdquo;
+                                            </p>
+                                        </div>
+                                    </li>
+
+                                    <li class="bg-purple-950/40 p-3 rounded-lg border border-purple-800">
+                                        <p class="font-semibold mb-1">
+                                            Step 2 – Super Prompt: Infrastructure
+                                        </p>
+                                        <p class="mb-1 text-purple-300">
+                                            Paste <strong>Super Prompt 1</strong> from Phase 3 and run it in Composer.
+                                        </p>
+                                        <ul class="list-disc list-inside space-y-1 text-purple-200">
+                                            <li>Watch the <strong>file tree</strong> on the left – new files should appear under
+                                                <code class="bg-purple-800 px-1 rounded font-mono">app/</code>.</li>
+                                            <li>Use the diff view and skim the changes (don’t auto-trust).</li>
+                                            <li>Press <kbd class="bg-purple-800 px-2 py-0.5 rounded font-mono">Cmd + Y</kbd> to
+                                                <strong>Accept All</strong> once it looks sane.</li>
+                                        </ul>
+                                    </li>
+
+                                    <li class="bg-purple-950/40 p-3 rounded-lg border border-purple-800">
+                                        <p class="font-semibold mb-1">
+                                            Step 3 – Super Prompt: Logic & UI
+                                        </p>
+                                        <p class="mb-1 text-purple-300">
+                                            Now run <strong>Super Prompt 2</strong> to generate the Server Actions and UI.
+                                        </p>
+                                        <ul class="list-disc list-inside space-y-1 text-purple-200">
+                                            <li>Confirm it creates <code class="bg-purple-800 px-1 rounded font-mono">app/actions/userActions.ts</code>
+                                                and <code class="bg-purple-800 px-1 rounded font-mono">app/components/UserGenerator.tsx</code>.</li>
+                                            <li>Look for imports that reference files that don’t exist – if you see one, tell Cursor:
+                                                <span class="italic text-purple-100">“Fix broken imports and only use existing paths.”</span></li>
+                                            <li>Once clean, Accept All and run <code class="bg-purple-800 px-1 rounded font-mono">npm run dev</code>.</li>
+                                        </ul>
+                                    </li>
+
+                                    <li class="bg-purple-950/40 p-3 rounded-lg border border-purple-800">
+                                        <p class="font-semibold mb-1">
+                                            Step 4 – Verify in the Browser
+                                        </p>
+                                        <p class="text-purple-300">
+                                            Visit <code class="bg-purple-800 px-1 rounded font-mono">http://localhost:3000</code>.<br />
+                                            Try generating users. If something breaks, copy the error back into Cursor and say:
+                                            <span class="italic">“Fix this error without changing the API contract.”</span>
+                                        </p>
+                                    </li>
+                                </ol>
+                            </div>
+
+                            <!-- Column 3: Patterns & Troubleshooting -->
+                            <div class="space-y-4 md:col-span-1">
+                                <h3 class="font-bold text-purple-200 text-sm mb-1">3. Patterns & Troubleshooting</h3>
+
+                                <!-- Good Prompt Patterns -->
+                                <div class="bg-purple-950/60 p-4 rounded-lg border border-purple-800 text-xs space-y-2">
+                                    <p class="font-semibold text-purple-100 uppercase tracking-wider text-[11px]">
+                                        Good Composer Prompts
+                                    </p>
+                                    <ul class="list-disc list-inside text-purple-200 space-y-1">
+                                        <li><span class="font-semibold">“Read these files first:”</span> and list the key files.</li>
+                                        <li><span class="font-semibold">“Only touch files under app/ and app/components/.”</span></li>
+                                        <li><span class="font-semibold">“Keep the existing Okta types and config shape.”</span></li>
+                                        <li><span class="font-semibold">“Show me a diff summary before applying.”</span></li>
+                                    </ul>
+                                </div>
+
+                                <!-- Common Failure Modes -->
+                                <div class="bg-purple-950/60 p-4 rounded-lg border border-purple-800 text-xs space-y-2">
+                                    <p class="font-semibold text-purple-100 uppercase tracking-wider text-[11px]">
+                                        Common Failure Modes
+                                    </p>
+                                    <ul class="list-disc list-inside text-purple-200 space-y-1">
+                                        <li>
+                                            <strong>Hallucinated paths:</strong> Cursor imports
+                                            <code class="bg-purple-800 px-1 rounded font-mono">~/components/Button</code> when it doesn’t exist.
+                                            Fix by saying: <span class="italic">“Only use relative paths from the app/ folder.”</span>
+                                        </li>
+                                        <li>
+                                            <strong>Server vs Client confusion:</strong> If you see
+                                            <code class="bg-purple-800 px-1 rounded font-mono">'use client'</code> at the top of a file that uses
+                                            secrets, ask: <span class="italic">“Move all API tokens and fetch logic into a Server Action.”</span>
+                                        </li>
+                                        <li>
+                                            <strong>Type errors everywhere:</strong> Ask Cursor:
+                                            <span class="italic">“Make the minimal TypeScript fixes needed to compile, but don’t change behavior.”</span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <!-- Reflection -->
+                                <div class="bg-purple-950/60 p-4 rounded-lg border border-purple-800 text-xs">
+                                    <p class="font-semibold text-purple-100 mb-2">
+                                        Reflection Question (For SEs)
+                                    </p>
+                                    <p class="text-purple-200">
+                                        How much time did it take you to build the User Generator in <strong>Phase 2</strong> vs.
+                                        <strong>Phase 3 with Cursor</strong>? That delta is what your customers feel when you bring
+                                        AI-accelerated prototyping into their POCs.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Divider -->
+            <div class="w-full h-px bg-slate-200"></div>
+
+            <!-- Phase 3 -->
+            <section id="phase3" class="scroll-mt-24">
+                <div class="mb-12 text-center">
+                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-okta-midnight text-xl font-bold mb-4 shadow-sm">3</div>
+                    <h2 class="text-3xl font-bold text-okta-midnight">The Cursor Speedrun</h2>
+                    <p class="text-okta-gray mt-2 font-medium">Rebuild Lab 2 in Record Time</p>
+                </div>
+
+                <!-- Phase 3 Checklist -->
+                <div class="mb-8 p-4 bg-white rounded-xl border border-slate-200 shadow-soft">
+                    <h4 class="text-sm font-bold text-okta-midnight mb-3 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fas fa-check-square text-green-500"></i> Phase 3: Cursor Workflow – Checklist
+                    </h4>
+                    <div class="flex flex-col gap-2">
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p3-step1" onclick="toggleCheck(this)">
+                            <i class="far fa-square text-slate-300"></i>
+                            <span class="text-xs font-medium text-okta-text">Create a NEW folder (e.g., <code>okta-cursor-lab</code>) & Run scaffold command</span>
+                        </div>
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p3-step2" onclick="toggleCheck(this)">
+                            <i class="far fa-square text-slate-300"></i>
+                            <span class="text-xs font-medium text-okta-text">Open Cursor & Hit <strong>Cmd + I</strong> (Composer)</span>
+                        </div>
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p3-step3" onclick="toggleCheck(this)">
+                            <i class="far fa-square text-slate-300"></i>
+                            <span class="text-xs font-medium text-okta-text">Paste <strong>Super Prompt 1</strong> (Infrastructure) → Accept All</span>
+                        </div>
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p3-step4" onclick="toggleCheck(this)">
+                            <i class="far fa-square text-slate-300"></i>
+                            <span class="text-xs font-medium text-okta-text">Paste <strong>Super Prompt 2</strong> (Logic & UI) → Accept All</span>
+                        </div>
+                        <div class="checklist-item flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer" data-id="p3-step5" onclick="toggleCheck(this)">
+                            <i class="far fa-square text-slate-300"></i>
+                            <span class="text-xs font-medium text-okta-text">Verify at localhost:3000 (Notice how much faster that was?)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Col 1: The Context -->
+                    <div class="md:col-span-1 space-y-4">
+                        <div class="bg-white p-5 rounded-lg border-l-4 border-okta-blue shadow-soft">
+                            <h4 class="font-bold text-okta-midnight mb-2">Scenario</h4>
+                            <p class="text-sm text-okta-gray">
+                                We are going to build the <strong>exact same</strong> User Generator app as Lab 2, but using Cursor. 
+                                <br><br>
+                                Notice how we can combine 4 steps into 2 "Super Prompts" because Cursor understands multi-file context better than a standard chat.
+                            </p>
+                        </div>
+                        
+                        <!-- Shortcuts Card -->
+                        <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 font-mono text-xs shadow-inner text-slate-200">
+                            <p class="text-slate-400 mb-2 font-bold uppercase tracking-wider">Cursor Cheatsheet</p>
+                            <ul class="space-y-2">
+                                <li class="flex justify-between items-center">
+                                    <span>Composer (The Magic)</span>
+                                    <kbd class="bg-slate-700 px-2 py-0.5 rounded text-white font-bold">Cmd + I</kbd>
+                                </li>
+                                <li class="flex justify-between items-center">
+                                    <span>Chat Sidebar</span>
+                                    <kbd class="bg-slate-700 px-2 py-0.5 rounded text-white font-bold">Cmd + L</kbd>
+                                </li>
+                                <li class="flex justify-between items-center">
+                                    <span>Accept All Edits</span>
+                                    <kbd class="bg-slate-700 px-2 py-0.5 rounded text-white font-bold">Cmd + Y</kbd>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Col 2: The Prompts -->
+                    <div class="md:col-span-2 space-y-6">
+                        
+                        <!-- Prompt 1: Infrastructure -->
+                        <div class="code-block group bg-white p-4 rounded-lg border border-slate-200 relative shadow-soft">
+                            <div class="flex justify-between text-xs text-okta-gray mb-1 uppercase font-bold tracking-wider">
+                                <span>01. Super Prompt: Infrastructure</span>
+                                <span>Generates 4 Files at Once</span>
+                            </div>
+                            <button onclick="copyToClipboard(this)" class="copy-btn bg-slate-700 hover:bg-slate-600 text-xs text-white px-2 py-1 rounded transition-colors">Copy</button>
+                            <pre><code class="language-markdown prompt-text">I am building an 'Okta User Generator' app.
+Stack: Next.js 15, App Router, TypeScript, Tailwind. No src directory.
+
+Please scaffold the core infrastructure:
+1. Create `app/types/okta.ts` with `OktaConfig` interface (orgUrl, apiToken).
+2. Create `app/data/constants.ts` with a `DEPARTMENT_ROLES` object (Engineering, Sales, HR, Marketing arrays) and random name arrays.
+3. Create `app/components/OktaContext.tsx` to manage credentials using React Context and localStorage.
+4. Create `app/settings/page.tsx` with a form to input credentials and a button to test the connection (hit `${orgUrl}/api/v1/users/me`).
+5. Wrap the app in `app/layout.tsx` with the provider.</code></pre>
+                        </div>
+
+                        <!-- Prompt 2: Logic & UI -->
+                        <div class="code-block group bg-white p-4 rounded-lg border border-slate-200 relative shadow-soft">
+                            <div class="flex justify-between text-xs text-okta-gray mb-1 uppercase font-bold tracking-wider">
+                                <span>02. Super Prompt: Logic & UI</span>
+                                <span>Server Actions + Components</span>
+                            </div>
+                            <button onclick="copyToClipboard(this)" class="copy-btn bg-slate-700 hover:bg-slate-600 text-xs text-white px-2 py-1 rounded transition-colors">Copy</button>
+                            <pre><code class="language-markdown prompt-text">Now create the generator logic and UI:
+
+1. Create `app/actions/userActions.ts`: A server action `populateDemoUsers` that loops 'count' times.
+   - It should randomly pick a Department and a matching Job Title.
+   - Generate a unique email (timestamped).
+   - Send a POST request to `${config.orgUrl}/api/v1/users?activate=true`.
+   - Return success/fail stats.
+
+2. Create `app/components/UserGenerator.tsx`:
+   - Check if `useOkta` has config. If not, link to Settings.
+   - Show a Slider (1-50 users) and a "Generate" button.
+   - Call the server action on click and show a loading spinner/results.
+
+3. Update `app/page.tsx` to render the `UserGenerator` component.</code></pre>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-white border-t border-slate-200 py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div>
+                        <h3 class="text-okta-midnight font-bold text-lg mb-4">Key Takeaways</h3>
+                        <ul class="space-y-2 text-okta-gray text-sm">
+                            <li class="flex items-start"><i class="fas fa-check text-green-500 mt-1 mr-2"></i> Context is King (Explain file structure).</li>
+                            <li class="flex items-start"><i class="fas fa-check text-green-500 mt-1 mr-2"></i> Iterate, Don't One-Shot.</li>
+                            <li class="flex items-start"><i class="fas fa-check text-green-500 mt-1 mr-2"></i> Trust but Verify (Read imports/loops).</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-okta-midnight font-bold text-lg mb-4">Resources</h3>
+                        <ul class="space-y-2 text-okta-gray text-sm">
+                            <li><a href="#" class="hover:text-okta-blue transition-colors">Next.js Documentation</a></li>
+                            <li><a href="#" class="hover:text-okta-blue transition-colors">Tailwind CSS Cheatsheet</a></li>
+                            <li><a href="#" class="hover:text-okta-blue transition-colors">Gemini Prompting Guide</a></li>
+                        </ul>
+                    </div>
+                    <div class="text-okta-gray text-xs">
+                        <p>&copy; 2025 Okta Identity Lab.</p>
+                        <p class="mt-2">Created for Engineering Enablement.</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- VIEW: Prerequisites Content -->
+    <div id="prereqs-view" class="hidden min-h-screen bg-okta-ice">
+        <div class="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+            <div class="mb-12">
+                <button onclick="toggleView('main')" class="text-okta-blue hover:text-okta-midnight mb-6 flex items-center gap-2 transition-colors font-semibold">
+                    <i class="fas fa-arrow-left"></i> Back to Lab
+                </button>
+                <h1 class="text-4xl font-extrabold text-okta-midnight tracking-tight mb-4">Pre-Flight <span class="text-okta-blue">Checklist</span></h1>
+                <p class="text-xl text-okta-gray">Ensure your development environment is primed before starting the workshop.</p>
+            </div>
+
+            <!-- Checklist Grid -->
+            <div class="grid gap-8">
+                <!-- Core Tools -->
+                <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-soft">
+                    <h2 class="text-2xl font-bold text-okta-midnight mb-6 flex items-center gap-3">
+                        <i class="fas fa-box-open text-okta-blue"></i> Core Tools
+                    </h2>
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-4 p-4 bg-slate-50 rounded-lg border border-slate-100">
+                            <div class="mt-1 text-green-500"><i class="fas fa-check-circle"></i></div>
+                            <div>
+                                <h3 class="text-okta-midnight font-bold">VS Code</h3>
+                                <p class="text-sm text-okta-gray mb-2">The command center. Ensure you are on the latest version.</p>
+                                <div class="bg-slate-800 p-2 rounded text-xs font-mono text-white inline-block">code --version</div>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-4 p-4 bg-slate-50 rounded-lg border border-slate-100">
+                            <div class="mt-1 text-green-500"><i class="fas fa-check-circle"></i></div>
+                            <div>
+                                <h3 class="text-okta-midnight font-bold">Node.js (LTS) & NPM</h3>
+                                <p class="text-sm text-okta-gray mb-2">Required for Next.js. Version 18.17.0 or later is strictly required.</p>
+                                <div class="bg-slate-800 p-2 rounded text-xs font-mono text-white inline-block">node -v && npm -v</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Package Managers -->
+                <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-soft">
+                    <h2 class="text-2xl font-bold text-okta-midnight mb-6 flex items-center gap-3">
+                        <i class="fas fa-terminal text-okta-blue"></i> Package Management
+                    </h2>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-100">
+                            <h3 class="text-okta-midnight font-bold mb-2"><i class="fab fa-apple mr-2"></i>macOS / Linux</h3>
+                            <p class="text-sm text-okta-gray mb-3">Homebrew is essential for managing dependencies.</p>
+                            <code class="block bg-slate-800 p-3 rounded text-xs font-mono text-green-400 select-all overflow-x-auto">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-100">
+                            <h3 class="text-okta-midnight font-bold mb-2"><i class="fab fa-windows mr-2"></i>Windows</h3>
+                            <p class="text-sm text-okta-gray mb-3">Recommend using Winget or Chocolatey.</p>
+                            <code class="block bg-slate-800 p-3 rounded text-xs font-mono text-green-400 select-all overflow-x-auto">winget install -e --id Microsoft.VisualStudioCode</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Extensions -->
+                <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-soft">
+                    <h2 class="text-2xl font-bold text-okta-midnight mb-6 flex items-center gap-3">
+                        <i class="fas fa-puzzle-piece text-purple-600"></i> VS Code Extensions
+                    </h2>
+                    <p class="text-sm text-okta-gray mb-4">Install these to enable syntax highlighting and formatting for the Vibe Stack.</p>
+                    <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="p-3 border border-slate-200 rounded bg-slate-50 text-center hover:border-okta-blue transition-colors">
+                            <span class="block font-bold text-okta-midnight">ESLint</span>
+                            <span class="text-xs text-okta-gray">Linting</span>
+                        </div>
+                        <div class="p-3 border border-slate-200 rounded bg-slate-50 text-center hover:border-okta-blue transition-colors">
+                            <span class="block font-bold text-okta-midnight">Prettier</span>
+                            <span class="text-xs text-okta-gray">Formatting</span>
+                        </div>
+                        <div class="p-3 border border-slate-200 rounded bg-slate-50 text-center hover:border-okta-blue transition-colors">
+                            <span class="block font-bold text-okta-midnight">Tailwind CSS</span>
+                            <span class="text-xs text-okta-gray">IntelliSense</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW: Concepts Guide -->
+    <div id="concepts-view" class="hidden min-h-screen bg-okta-ice">
+        <div class="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+            <div class="mb-12">
+                <button onclick="toggleView('main')" class="text-okta-blue hover:text-okta-midnight mb-6 flex items-center gap-2 transition-colors font-semibold">
+                    <i class="fas fa-arrow-left"></i> Back to Lab
+                </button>
+                <h1 class="text-4xl font-extrabold text-okta-midnight tracking-tight mb-4">Concepts <span class="text-okta-blue">Guide</span></h1>
+                <p class="text-xl text-okta-gray">The "Why" behind the "What". Understanding the architecture of your toolkit.</p>
+            </div>
+
+            <!-- Architecture Diagram -->
+            <div class="bg-white rounded-xl border border-slate-200 p-8 shadow-soft mb-8">
+                <h2 class="text-2xl font-bold text-okta-midnight mb-6 flex items-center gap-3">
+                    <i class="fas fa-sitemap text-purple-500"></i> The Architecture
+                </h2>
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-center">
+                    
+                    <!-- Client -->
+                    <div class="p-4 bg-blue-50 rounded-lg border border-blue-100 w-full md:w-1/3">
+                        <div class="text-3xl mb-2">💻</div>
+                        <h3 class="font-bold text-okta-midnight">Client (Browser)</h3>
+                        <p class="text-xs text-okta-gray mt-2">Your Dashboard UI. Runs React components.</p>
+                        <div class="mt-3 text-xs font-mono bg-white p-1 rounded text-red-500 border border-red-200">
+                            🚫 Cannot call Okta API (CORS)
+                        </div>
+                    </div>
+
+                    <!-- Arrow -->
+                    <div class="text-slate-300 text-2xl hidden md:block">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <div class="text-slate-300 text-2xl md:hidden">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+
+                    <!-- Server -->
+                    <div class="p-4 bg-green-50 rounded-lg border border-green-100 w-full md:w-1/3">
+                        <div class="text-3xl mb-2">⚙️</div>
+                        <h3 class="font-bold text-okta-midnight">Next.js Server</h3>
+                        <p class="text-xs text-okta-gray mt-2">Runs Server Actions. Hides API Token.</p>
+                        <div class="mt-3 text-xs font-mono bg-white p-1 rounded text-green-600 border border-green-200">
+                            ✅ Proxy for API Calls
+                        </div>
+                    </div>
+
+                    <!-- Arrow -->
+                    <div class="text-slate-300 text-2xl hidden md:block">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <div class="text-slate-300 text-2xl md:hidden">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+
+                    <!-- Okta -->
+                    <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 w-full md:w-1/3">
+                        <div class="text-3xl mb-2">☁️</div>
+                        <h3 class="font-bold text-okta-midnight">Okta API</h3>
+                        <p class="text-xs text-okta-gray mt-2">The Source of Truth.</p>
+                        <div class="mt-3 text-xs font-mono bg-white p-1 rounded text-slate-500 border border-slate-200">
+                            /api/v1/users
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW: CORS Deep Dive -->
+            <div class="bg-white rounded-xl border border-slate-200 p-8 shadow-soft mb-8">
+                <h2 class="text-xl font-bold text-okta-midnight mb-6 flex items-center gap-2">
+                    <i class="fas fa-shield-alt text-red-500"></i> Deep Dive: What is CORS?
+                </h2>
+                <div class="grid md:grid-cols-2 gap-12">
+                    <div class="bg-slate-50 p-5 rounded-xl border border-slate-100">
+                        <h3 class="font-bold text-sm text-okta-midnight mb-3 flex items-center gap-2">
+                            <i class="fas fa-user-secret text-slate-400"></i> The Analogy: The ID Badge
+                        </h3>
+                        <p class="text-sm text-okta-gray leading-relaxed">
+                            Imagine your browser is a strict security guard at an office building (Your App). You try to send a messenger to a completely different building across the street (Okta).
+                            <br><br>
+                            The security guard stops the messenger at the door because their ID badge says <strong>"Localhost"</strong>, but the other building only accepts badges from <strong>"Trusted Partners"</strong>.
+                        </p>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-okta-midnight mb-3">The Technical Reality</h3>
+                        <p class="text-sm text-okta-gray leading-relaxed mb-4">
+                            <strong>CORS (Cross-Origin Resource Sharing)</strong> is a browser security feature. It exists to prevent a malicious website (e.g., <code>evil.com</code>) from making background API calls to your bank (e.g., <code>bank.com</code>) using your logged-in session.
+                        </p>
+                        <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-r text-xs text-red-800">
+                            <strong>Why it affects this Lab:</strong> <br>
+                            Okta's Management API is secure by default. It doesn't know about your local development environment (<code>localhost:3000</code>), so if the browser tries to call it directly, Okta blocks it.
+                            <br><br>
+                            <strong>The Fix:</strong> We move the request to the <strong>Next.js Server</strong> (Server Actions). Servers do not have CORS restrictions, so they can pass the request safely.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Tech Stack -->
+                <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-soft">
+                    <h2 class="text-xl font-bold text-okta-midnight mb-4">The Tech Stack (The Tools)</h2>
+                    <div class="space-y-6">
+                        <div class="border-l-4 border-okta-blue pl-4">
+                            <h3 class="font-bold text-sm text-okta-midnight">Next.js (The Framework)</h3>
+                            <p class="text-xs text-okta-gray mt-1">
+                                <strong>What:</strong> A production framework built on top of React. <br>
+                                <strong>Why:</strong> It handles the "boring stuff" like routing (URLs) and backend API proxies automatically. It lets us build a full-stack app in one folder without setting up a separate backend server.
+                            </p>
+                        </div>
+                        <div class="border-l-4 border-blue-400 pl-4">
+                            <h3 class="font-bold text-sm text-okta-midnight">TypeScript (The Safety Net)</h3>
+                            <p class="text-xs text-okta-gray mt-1">
+                                <strong>What:</strong> JavaScript with strict rules. <br>
+                                <strong>Why:</strong> It prevents bugs before they happen. If you try to access <code>user.firsName</code> (typo), TypeScript yells at you in the editor so you don't break the app during a demo.
+                            </p>
+                        </div>
+                        <div class="border-l-4 border-teal-400 pl-4">
+                            <h3 class="font-bold text-sm text-okta-midnight">Tailwind CSS (The Stylist)</h3>
+                            <p class="text-xs text-okta-gray mt-1">
+                                <strong>What:</strong> A utility-first styling library. <br>
+                                <strong>Why:</strong> Instead of writing a separate CSS file to center a box, you just write <code>class="flex justify-center"</code>. It speeds up UI building by 10x.
+                            </p>
+                        </div>
+                        <div class="border-l-4 border-red-400 pl-4">
+                            <h3 class="font-bold text-sm text-okta-midnight">NPM (The App Store)</h3>
+                            <p class="text-xs text-okta-gray mt-1">
+                                <strong>What:</strong> Node Package Manager. <br>
+                                <strong>Why:</strong> It allows us to download pre-written code (libraries) like the Okta SDK or icon sets so we don't have to reinvent the wheel.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Directory Map -->
+                <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-soft">
+                    <h2 class="text-xl font-bold text-okta-midnight mb-4">Project Map (Where things live)</h2>
+                    <ul class="space-y-4 font-mono text-xs">
+                        <li class="flex items-start gap-3">
+                            <div class="bg-yellow-100 p-1.5 rounded text-yellow-600"><i class="fas fa-folder"></i></div>
+                            <div>
+                                <span class="font-bold text-slate-700 block text-sm">app/</span>
+                                <span class="text-slate-500">The heart of the app. This folder <em>is</em> your router.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 pl-4 border-l border-slate-200 ml-3">
+                            <div class="bg-blue-50 p-1.5 rounded text-blue-500"><i class="fas fa-file-code"></i></div>
+                            <div>
+                                <span class="font-bold text-slate-700 block">page.tsx</span>
+                                <span class="text-slate-500">The Home Page view (localhost:3000/). If you create <code>app/settings/page.tsx</code>, that becomes <code>/settings</code>.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 pl-4 border-l border-slate-200 ml-3">
+                            <div class="bg-blue-50 p-1.5 rounded text-blue-500"><i class="fas fa-file-code"></i></div>
+                            <div>
+                                <span class="font-bold text-slate-700 block">layout.tsx</span>
+                                <span class="text-slate-500">The Wrapper. Code here (Navbar, Footer) appears on <em>every</em> page automatically.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3 pl-4 border-l border-slate-200 ml-3">
+                            <div class="bg-pink-50 p-1.5 rounded text-pink-500"><i class="fab fa-css3-alt"></i></div>
+                            <div>
+                                <span class="font-bold text-slate-700 block">globals.css</span>
+                                <span class="text-slate-500">Global styles. This is where Tailwind is imported and where you set root font sizes.</span>
+                            </div>
+                        </li>
+                        
+                        <li class="flex items-start gap-3 mt-4">
+                            <div class="bg-purple-100 p-1.5 rounded text-purple-600"><i class="fas fa-server"></i></div>
+                            <div>
+                                <span class="font-bold text-slate-700 block text-sm">app/actions/</span>
+                                <span class="text-slate-500"><strong>Server Actions.</strong> Functions that run on the server to securely call Okta APIs. This is where we put the Okta API calls so the browser never sees the API Token.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="bg-green-100 p-1.5 rounded text-green-600"><i class="fas fa-cubes"></i></div>
+                            <div>
+                                <span class="font-bold text-slate-700 block text-sm">app/components/</span>
+                                <span class="text-slate-500"><strong>UI Components.</strong> Reusable Lego bricks like <code>&lt;Button /&gt;</code> or <code>&lt;Card /&gt;</code> that we import into pages.</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <div class="bg-purple-500 p-1.5 rounded text-white"><i class="fas fa-code"></i></div>
+                            <div>
+                                <span class="font-bold text-slate-700 block text-sm">app/types/</span>
+                                <span class="text-slate-500"><strong>Interfaces.</strong> Definitions of what data looks like (e.g., what an <code>OktaConfig</code> object contains).</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- New Section: Coding Concepts -->
+            <div class="mt-8 bg-white rounded-xl border border-slate-200 p-8 shadow-soft">
+                <h2 class="text-xl font-bold text-okta-midnight mb-6 flex items-center gap-2">
+                    <i class="fas fa-brain text-orange-500"></i> Coding Concepts for SEs
+                </h2>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="p-4 bg-slate-50 rounded-lg">
+                        <h3 class="font-bold text-okta-midnight mb-2 text-sm">React Components</h3>
+                        <p class="text-xs text-okta-gray">Think of these as <strong>Custom HTML Tags</strong>. Instead of writing 20 lines of HTML for a user card, you write <code>&lt;UserCard name="Alice" /&gt;</code>. It makes code readable and reusable.</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-lg">
+                        <h3 class="font-bold text-okta-midnight mb-2 text-sm">Props (Properties)</h3>
+                        <p class="text-xs text-okta-gray">The <strong>Arguments</strong> passed to a component. In <code>&lt;UserCard name="Alice" /&gt;</code>, "name" is a prop. It allows the same component to display different data.</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-lg">
+                        <h3 class="font-bold text-okta-midnight mb-2 text-sm">State (useState)</h3>
+                        <p class="text-xs text-okta-gray">The component's <strong>Short-term Memory</strong>. If you type in a text box or toggle a switch, that data is stored in "State". When State changes, the screen updates automatically.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Scenario Data for Phase 1
+        const scenarios = [
+            {
+                title: "Late Night Noodle Verse (Ramen Shop)",
+                desc: "Design vibe: Dark, moody, neon accents. Focus on visuals.",
+                step1: "Write a single-file HTML landing page for a trendy Ramen shop called 'Late Night Noodle Verse'. Include a Hero section with a large background image, a 'Menu' grid with hover effects, and a functioning 'Reservation' form. Use Tailwind CSS for styling. Design vibe: Dark, moody, neon accents.",
+                step2: "The menu feels static. Add an interactive 'Ramen Configurator' section where users can toggle toppings (Egg, Chashu, Nori) which updates a live 'Estimated Price'. Also, ensure the Reservation form saves the user's name to localStorage so it says 'Welcome back, [Name]' on refresh.",
+                step3a: "Replace the static customer reviews with real data fetched from 'https://randomuser.me/api/?results=3'. Use the user's picture, name, and generate a fake 5-star review for each.",
+                step3b: "I'm pitching this to a high-end French investor. Rebrand the site to look like a luxury bistro. Use a gold/white color scheme (#D4AF37), elegant serif fonts, and remove the neon effects."
+            },
+            {
+                title: "VibeScale (SaaS Pricing)",
+                desc: "Design vibe: Clean, corporate memphis, trust-inspiring. Focus on business logic.",
+                step1: "Write a single-file HTML landing page for a SaaS tool called 'VibeScale'. Include a Hero section, a Feature comparison table, and a Pricing section with 3 tiers (Starter, Pro, Enterprise). Use Tailwind CSS. Design vibe: Clean, corporate, trustworthy blue tones.",
+                step2: "Make the pricing dynamic. Add a toggle for 'Monthly vs Yearly' billing that updates the prices (20% off for Yearly). Also, add an 'ROI Calculator' slider where dragging a 'User Count' slider updates the estimated monthly savings.",
+                step3a: "Add a 'Recent Signups' ticker to the header. Fetch random user data from 'https://randomuser.me/api/?results=5' and display their names scrolling horizontally to simulate social proof.",
+                step3b: "Simulate an 'Enterprise White Label' feature. I'm demoing to a major bank (Chase). Dynamically inject a CSS stylesheet to override the root variables for colors/fonts to match their brand (Navy Blue/Serif)."
+            },
+            {
+                title: "DevFolio (Interactive Portfolio)",
+                desc: "Design vibe: Minimalist, monochromatic, developer-centric. Focus on personalization.",
+                step1: "Write a single-file HTML personal portfolio. Include a Hero section with a typing text effect, a 'Projects' grid, and a 'Contact' section. Use Tailwind CSS. Design vibe: Minimalist, monochromatic, heavy use of Courier/Mono fonts.",
+                step2: "The site needs more utility. Add a 'Theme Toggle' (Light/Dark/Matrix Mode) that persists in localStorage. Also, add a text input filter above the Projects grid that allows users to filter projects by tech stack (e.g., typing 'React' hides non-React projects).",
+                step3a: "Make the 'Projects' section dynamic. Instead of hardcoded HTML, fetch my public repositories from GitHub (or use a mock JSON file if API limit is hit) and render the cards dynamically.",
+                step3b: "I'm interviewing at a company known for 'Material Design' (like Google). Rebrand the portfolio to use Material Design principles: lots of whitespace, card elevations (shadows), and the Roboto font."
+            }
+        ];
+
+        let currentScenarioIndex = 0;
+
+        // Initialize Progress Bar State
+        const progressState = {
+            total: 0,
+            checked: 0
+        };
+
+        // Load progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem('vibeLabProgress');
+            if (saved) {
+                const checkedIds = JSON.parse(saved);
+                document.querySelectorAll('.checklist-item').forEach(item => {
+                    const id = item.getAttribute('data-id');
+                    if (id && checkedIds.includes(id)) {
+                        item.classList.add('checked');
+                        const icon = item.querySelector('i');
+                        icon.classList.remove('far', 'fa-square');
+                        icon.classList.add('fas', 'fa-check-square');
+                    }
+                });
+            }
+            updateGlobalProgress();
+        }
+
+        // Save progress to localStorage
+        function saveProgress() {
+            const checkedItems = [];
+            document.querySelectorAll('.checklist-item.checked').forEach(item => {
+                const id = item.getAttribute('data-id');
+                if (id) checkedItems.push(id);
+            });
+            localStorage.setItem('vibeLabProgress', JSON.stringify(checkedItems));
+        }
+
+        function updateGlobalProgress() {
+            // Count all checkboxes in main view
+            const mainView = document.getElementById('main-view');
+            const allCheckboxes = mainView.querySelectorAll('.checklist-item');
+            const checkedBoxes = mainView.querySelectorAll('.checklist-item.checked');
+            
+            const progress = allCheckboxes.length > 0 ? (checkedBoxes.length / allCheckboxes.length) * 100 : 0;
+            const bar = document.getElementById('global-progress');
+            const text = document.getElementById('progress-text');
+            
+            if(bar) {
+                bar.style.width = `${progress}%`;
+            }
+            if(text) {
+                text.innerText = `${Math.round(progress)}% Complete`;
+                if(progress > 0) text.classList.remove('hidden');
+            }
+        }
+
+        function changeScenario(direction) {
+            currentScenarioIndex += direction;
+            
+            // Loop functionality
+            if (currentScenarioIndex >= scenarios.length) currentScenarioIndex = 0;
+            if (currentScenarioIndex < 0) currentScenarioIndex = scenarios.length - 1;
+
+            const scenario = scenarios[currentScenarioIndex];
+
+            // Update DOM with simple animation effect
+            const elements = ['prompt-step-1', 'prompt-step-2', 'prompt-step-3-a', 'prompt-step-3-b', 'scenario-title', 'scenario-desc'];
+            
+            elements.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.style.opacity = '0';
+            });
+
+            setTimeout(() => {
+                document.getElementById('scenario-label').innerText = `Scenario ${currentScenarioIndex + 1} of ${scenarios.length}`;
+                document.getElementById('scenario-title').innerText = scenario.title;
+                document.getElementById('scenario-desc').innerText = scenario.desc;
+                
+                // Update Code Content safely for Prism
+                document.getElementById('prompt-step-1').textContent = scenario.step1;
+                document.getElementById('prompt-step-2').textContent = scenario.step2;
+                document.getElementById('prompt-step-3-a').textContent = scenario.step3a;
+                document.getElementById('prompt-step-3-b').textContent = scenario.step3b;
+
+                // Re-run Syntax Highlighting
+                Prism.highlightAll();
+
+                elements.forEach(id => {
+                    const el = document.getElementById(id);
+                    if(el) el.style.opacity = '1';
+                });
+            }, 200);
+        }
+
+        // Add transition styles for smoother switching
+        document.addEventListener('DOMContentLoaded', () => {
+            const elements = ['prompt-step-1', 'prompt-step-2', 'prompt-step-3-a', 'prompt-step-3-b', 'scenario-title', 'scenario-desc'];
+            elements.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.style.transition = 'opacity 0.2s ease-in-out';
+            });
+            
+            // Initial highlight
+            Prism.highlightAll();
+            
+            // Load Saved Progress
+            loadProgress();
+        });
+
+        // Toggle Views Function
+        function toggleView(viewId, scrollTargetId) {
+            const main = document.getElementById('main-view');
+            const prereqs = document.getElementById('prereqs-view');
+            const concepts = document.getElementById('concepts-view');
+            const progressStrip = document.getElementById('progress-strip');
+            const mainNav = document.getElementById('main-nav');
+            
+            if (!main || !prereqs || !concepts) return;
+
+            // Reset all
+            main.classList.add('hidden');
+            prereqs.classList.add('hidden');
+            concepts.classList.add('hidden');
+            
+            // Show requested
+            if (viewId === 'prereqs') {
+                prereqs.classList.remove('hidden');
+                if(progressStrip) progressStrip.classList.add('hidden'); 
+                if(mainNav) mainNav.classList.add('hidden'); // Hide main nav for focus
+                window.scrollTo(0, 0);
+            } else if (viewId === 'concepts') {
+                concepts.classList.remove('hidden');
+                if(progressStrip) progressStrip.classList.add('hidden');
+                if(mainNav) mainNav.classList.add('hidden'); // Hide main nav for focus
+                window.scrollTo(0, 0);
+            } else {
+                main.classList.remove('hidden');
+                if(progressStrip) progressStrip.classList.remove('hidden');
+                if(mainNav) mainNav.classList.remove('hidden'); // Show main nav
+                if (scrollTargetId) {
+                    setTimeout(() => {
+                        const el = document.getElementById(scrollTargetId);
+                        if(el) el.scrollIntoView({ behavior: 'smooth' });
+                    }, 50);
+                } else {
+                    window.scrollTo(0, 0);
+                }
+            }
+        }
+
+        function copyToClipboard(button) {
+            // Find the code text
+            const container = button.closest('.code-block');
+            const codeElement = container.querySelector('code');
+            const textToCopy = codeElement.innerText || codeElement.textContent;
+
+            const onCopySuccess = () => {
+                showToast();
+                const originalText = button.innerText;
+                button.innerText = 'Copied!';
+                button.classList.add('bg-green-500', 'text-white');
+                button.classList.remove('bg-slate-700');
+                
+                setTimeout(() => {
+                    button.innerText = originalText;
+                    button.classList.remove('bg-green-500', 'text-white');
+                    button.classList.add('bg-slate-700');
+                }, 2000);
+            };
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(textToCopy).then(onCopySuccess).catch(err => {
+                    fallbackCopyTextToClipboard(textToCopy, onCopySuccess);
+                });
+            } else {
+                fallbackCopyTextToClipboard(textToCopy, onCopySuccess);
+            }
+        }
+
+        function fallbackCopyTextToClipboard(text, onSuccess) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) onSuccess();
+            } catch (err) {
+                console.error('Fallback copy failed', err);
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Checklist visual toggle
+        function toggleCheck(el) {
+            el.classList.toggle('checked');
+            const icon = el.querySelector('i');
+            if (el.classList.contains('checked')) {
+                icon.classList.remove('far', 'fa-square');
+                icon.classList.add('fas', 'fa-check-square');
+            } else {
+                icon.classList.remove('fas', 'fa-check-square');
+                icon.classList.add('far', 'fa-square');
+            }
+            saveProgress(); // Save to localStorage
+            updateGlobalProgress(); // Update bar
+        }
+
+        // Bridge Lesson Tabs
+        function switchTab(tabId) {
+            const tabs = ['tab-workflow', 'tab-api'];
+            
+            tabs.forEach(t => {
+                const el = document.getElementById(t);
+                if (t === tabId) {
+                    el.classList.remove('hidden');
+                    el.classList.add('grid');
+                } else {
+                    el.classList.add('hidden');
+                    el.classList.remove('grid');
+                }
+            });
+
+            // Update button styles
+            if (tabId === 'tab-workflow') {
+                document.getElementById('btn-workflow').classList.add('border-green-400', 'text-white');
+                document.getElementById('btn-workflow').classList.remove('border-transparent', 'text-indigo-300');
+                
+                document.getElementById('btn-api').classList.remove('border-green-400', 'text-white');
+                document.getElementById('btn-api').classList.add('border-transparent', 'text-indigo-300');
+            } else {
+                document.getElementById('btn-api').classList.add('border-green-400', 'text-white');
+                document.getElementById('btn-api').classList.remove('border-transparent', 'text-indigo-300');
+                
+                document.getElementById('btn-workflow').classList.remove('border-green-400', 'text-white');
+                document.getElementById('btn-workflow').classList.add('border-transparent', 'text-indigo-300');
+            }
+        }
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (!targetId || targetId === '#') return;
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+        
+        // Progress Strip Highlighting
+        window.addEventListener('scroll', () => {
+            const sections = ['phase1', 'phase2', 'phase3'];
+            const navLinks = {
+                'phase1': document.getElementById('prog-1'),
+                'phase2': document.getElementById('prog-2'),
+                'phase3': document.getElementById('prog-3')
+            };
+            
+            let current = '';
+            
+            sections.forEach(sectionId => {
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    const sectionTop = section.offsetTop;
+                    if (scrollY >= sectionTop - 300) {
+                        current = sectionId;
+                    }
+                }
+            });
+            
+            if (current) {
+                Object.keys(navLinks).forEach(key => {
+                    if(navLinks[key]) {
+                        navLinks[key].classList.remove('text-okta-blue', 'font-bold');
+                        navLinks[key].classList.add('text-slate-400');
+                    }
+                });
+                if (navLinks[current]) {
+                    navLinks[current].classList.remove('text-slate-400');
+                    navLinks[current].classList.add('text-okta-blue', 'font-bold');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
