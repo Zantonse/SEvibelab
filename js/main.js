@@ -3,6 +3,9 @@ const getElement = (id) => document.getElementById(id);
 
 function init() {
   highlightCodeBlocks();
+  addLanguageLabels();
+  addLineNumbers();
+  makeCodeBlocksExpandable();
   loadProgress();
   attachSmoothScroll();
   window.addEventListener('scroll', handleProgressStripHighlight);
@@ -13,6 +16,59 @@ document.addEventListener('DOMContentLoaded', init);
 function highlightCodeBlocks() {
   if (window?.Prism) {
     window.Prism.highlightAll();
+  }
+}
+
+function addLanguageLabels() {
+  document.querySelectorAll('.code-block pre[class*="language-"]').forEach((pre) => {
+    const codeBlock = pre.closest('.code-block');
+    if (!codeBlock || codeBlock.hasAttribute('data-language')) return;
+    
+    const classList = pre.className;
+    const match = classList.match(/language-(\w+)/);
+    if (match && match[1]) {
+      const lang = match[1];
+      codeBlock.setAttribute('data-language', lang);
+    }
+  });
+}
+
+function addLineNumbers() {
+  document.querySelectorAll('.code-block pre[class*="language-"]').forEach((pre) => {
+    // Only add to code blocks longer than 10 lines
+    const code = pre.querySelector('code');
+    if (code && code.textContent.split('\n').length > 10) {
+      pre.classList.add('line-numbers');
+    }
+  });
+}
+
+function makeCodeBlocksExpandable() {
+  document.querySelectorAll('.code-block pre').forEach((pre) => {
+    const codeBlock = pre.closest('.code-block');
+    if (!codeBlock) return;
+    
+    // If code block is taller than 400px, make it expandable
+    if (pre.scrollHeight > 400) {
+      codeBlock.classList.add('expandable');
+      
+      // Add expand button
+      const expandBtn = document.createElement('button');
+      expandBtn.className = 'expand-code-btn';
+      expandBtn.innerHTML = '<i class="fas fa-chevron-down"></i> Show More';
+      expandBtn.onclick = () => toggleCodeExpansion(codeBlock, expandBtn);
+      codeBlock.appendChild(expandBtn);
+    }
+  });
+}
+
+function toggleCodeExpansion(codeBlock, button) {
+  codeBlock.classList.toggle('expanded');
+  if (codeBlock.classList.contains('expanded')) {
+    button.innerHTML = '<i class="fas fa-chevron-up"></i> Show Less';
+  } else {
+    button.innerHTML = '<i class="fas fa-chevron-down"></i> Show More';
+    codeBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 
@@ -251,9 +307,74 @@ function handleProgressStripHighlight() {
   }
 }
 
+function downloadGlossary() {
+  // Create a simple text version of the glossary for download
+  const glossaryText = `
+OKTA SE VIBE LAB - QUICK REFERENCE GUIDE
+=========================================
+
+📌 Live Preview
+A VS Code extension that shows a real-time preview of your HTML file. Changes appear instantly without manual refresh.
+
+🤖 GitHub Copilot
+An AI pair programmer that lives inside VS Code. It suggests code completions, explains functions, and helps debug errors.
+
+🔗 Separation of Concerns
+A design principle that divides code into distinct files: HTML (structure), CSS (style), JavaScript (behavior). Makes code easier to maintain.
+
+💾 localStorage
+Browser storage that persists data even after closing the page. Used here to save your progress through the labs.
+
+🎨 Inline JavaScript
+JavaScript code embedded directly in an HTML file using <script> tags. Simple but not scalable for large projects.
+
+🧩 Prompt Engineering
+The art of writing clear, specific instructions for AI tools. Good prompts describe outcomes, not implementation details.
+
+🔐 Okta Identity Governance (OIG)
+Okta's governance solution for access reviews, certifications, and compliance workflows. Ideal for regulated industries.
+
+♻️ Lifecycle Management (LCM)
+Automates user provisioning, deprovisioning, and updates across applications using SCIM or proprietary connectors.
+
+🛡️ Okta Privileged Access (OPA)
+Secures privileged accounts with just-in-time access, session recording, and zero standing privileges for infrastructure.
+
+📱 Device Trust
+Verifies device posture (OS version, encryption, etc.) before granting access. Part of zero trust security strategies.
+
+🔄 SCIM (System for Cross-domain Identity Management)
+An open standard for automating user provisioning. Supported by most SaaS apps for seamless user management.
+
+🎯 Multi-Factor Authentication (MFA)
+Requires two or more verification factors (password + phone, biometric, etc.) to authenticate. Critical for security.
+
+PRO TIPS:
+- Bookmark this page: Your progress is saved automatically
+- Work at your pace: No need to complete all labs in one session
+- Copy code carefully: Use the copy buttons to avoid typos
+- Ask questions: Paste errors into Copilot Chat or Gemini
+
+© 2025 Okta Identity Lab - Created for Engineering Enablement
+`;
+
+  const blob = new Blob([glossaryText], { type: 'text/plain' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'okta-se-vibe-lab-glossary.txt';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  window.URL.revokeObjectURL(url);
+  
+  showToast();
+}
+
 // Expose functions for inline handlers
 window.changeScenario = changeScenario;
 window.toggleView = toggleView;
 window.copyToClipboard = copyToClipboard;
 window.switchTab = switchTab;
 window.toggleCheck = toggleCheck;
+window.downloadGlossary = downloadGlossary;

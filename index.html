@@ -11,9 +11,16 @@
     
     <!-- Prism.js for Syntax Highlighting (Theme: Tomorrow Night) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -208,6 +215,15 @@
             <!-- Phase 1 -->
             <section id="phase1" class="relative scroll-mt-24">
                 <div class="section-shell">
+                    <!-- Breadcrumb -->
+                    <nav class="flex items-center gap-2 text-xs text-slate-500 mb-4 font-medium" aria-label="Breadcrumb">
+                        <a href="#" onclick="toggleView('main'); return false;" class="hover:text-okta-blue transition-colors">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                        <i class="fas fa-chevron-right text-slate-300 text-[10px]"></i>
+                        <span class="text-okta-midnight font-bold">Phase 1: Canvas Prototype</span>
+                    </nav>
+                    
                     <div class="bg-gradient-to-br from-blue-900 to-purple-900 -m-11 mb-6 p-8 rounded-t-[1.75rem]">
                         <span class="uppercase text-xs tracking-[0.2em] text-white/80 block mb-2">Lab 1 • Canvas Prototype</span>
                         <h2 class="text-2xl font-bold text-white mb-2">The "One-Shot" Prototype</h2>
@@ -417,6 +433,16 @@ Return the complete HTML file.</code></pre>
                             </li>
                         </ul>
                     </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="flex items-center justify-between mt-8 pt-6 border-t border-slate-200">
+                        <button class="text-slate-400 cursor-not-allowed flex items-center gap-2 text-sm font-semibold" disabled>
+                            <i class="fas fa-chevron-left"></i> Previous Lab
+                        </button>
+                        <button onclick="document.getElementById('phase2').scrollIntoView({behavior: 'smooth'})" class="bg-okta-midnight text-white px-6 py-3 rounded-lg hover:bg-blue-900 transition-colors flex items-center gap-2 text-sm font-semibold shadow-lg">
+                            Next: Lab 2 <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
                 </div>
             </section>
 
@@ -515,6 +541,15 @@ Return the complete HTML file.</code></pre>
 
             <!-- Phase 2 -->
             <section id="phase2" class="scroll-mt-24">
+                <!-- Breadcrumb -->
+                <nav class="flex items-center gap-2 text-xs text-slate-500 mb-4 font-medium px-4" aria-label="Breadcrumb">
+                    <a href="#" onclick="toggleView('main'); return false;" class="hover:text-okta-blue transition-colors">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                    <i class="fas fa-chevron-right text-slate-300 text-[10px]"></i>
+                    <span class="text-okta-midnight font-bold">Phase 2: Multi-File Structure</span>
+                </nav>
+                
                 <div class="mb-12 text-center px-4">
                     <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-okta-midnight text-xl font-bold mb-4 shadow-sm">2</div>
                     <h2 class="text-3xl font-bold text-okta-midnight">Enhanced Discovery Tool</h2>
@@ -1005,6 +1040,15 @@ Return THREE separate code blocks labeled:
 
             <!-- Phase 3 -->
             <section id="phase3" class="scroll-mt-24">
+                <!-- Breadcrumb -->
+                <nav class="flex items-center gap-2 text-xs text-slate-500 mb-4 font-medium px-4" aria-label="Breadcrumb">
+                    <a href="#" onclick="toggleView('main'); return false;" class="hover:text-okta-blue transition-colors">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                    <i class="fas fa-chevron-right text-slate-300 text-[10px]"></i>
+                    <span class="text-okta-midnight font-bold">Phase 3: VS Code Integration</span>
+                </nav>
+                
                 <div class="mb-8 sm:mb-12 text-center px-4">
                     <div class="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue-100 text-okta-midnight text-lg sm:text-xl font-bold mb-3 sm:mb-4 shadow-sm">3</div>
                     <h2 class="text-2xl sm:text-3xl font-bold text-okta-midnight">VS Code Power Tools</h2>
@@ -1186,6 +1230,161 @@ Return THREE separate code blocks labeled:
                     </div>
                 </div>
 
+                </div>
+            </section>
+
+            <!-- Glossary / Quick Reference -->
+            <section id="glossary" class="scroll-mt-24">
+                <div class="section-shell bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-okta-midnight flex items-center gap-3">
+                                <i class="fas fa-book text-indigo-600"></i>
+                                Quick Reference Guide
+                            </h2>
+                            <p class="text-sm text-slate-600 mt-1">Essential terms and concepts for this lab</p>
+                        </div>
+                        <button onclick="downloadGlossary()" class="hidden md:flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-semibold">
+                            <i class="fas fa-download"></i> Download PDF
+                        </button>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <!-- Term Card Template -->
+                        <div class="bg-white rounded-lg p-4 border border-indigo-100 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-okta-midnight mb-2 flex items-center gap-2">
+                                <span class="text-indigo-600">📌</span> Live Preview
+                            </h4>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                A VS Code extension that shows a real-time preview of your HTML file. Changes appear instantly without manual refresh.
+                            </p>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-4 border border-indigo-100 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-okta-midnight mb-2 flex items-center gap-2">
+                                <span class="text-indigo-600">🤖</span> GitHub Copilot
+                            </h4>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                An AI pair programmer that lives inside VS Code. It suggests code completions, explains functions, and helps debug errors.
+                            </p>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-4 border border-indigo-100 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-okta-midnight mb-2 flex items-center gap-2">
+                                <span class="text-indigo-600">🔗</span> Separation of Concerns
+                            </h4>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                A design principle that divides code into distinct files: HTML (structure), CSS (style), JavaScript (behavior). Makes code easier to maintain.
+                            </p>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-4 border border-indigo-100 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-okta-midnight mb-2 flex items-center gap-2">
+                                <span class="text-indigo-600">💾</span> localStorage
+                            </h4>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                Browser storage that persists data even after closing the page. Used here to save your progress through the labs.
+                            </p>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-4 border border-indigo-100 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-okta-midnight mb-2 flex items-center gap-2">
+                                <span class="text-indigo-600">🎨</span> Inline JavaScript
+                            </h4>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                JavaScript code embedded directly in an HTML file using &lt;script&gt; tags. Simple but not scalable for large projects.
+                            </p>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-4 border border-indigo-100 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-okta-midnight mb-2 flex items-center gap-2">
+                                <span class="text-indigo-600">🧩</span> Prompt Engineering
+                            </h4>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                The art of writing clear, specific instructions for AI tools. Good prompts describe outcomes, not implementation details.
+                            </p>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-4 border border-indigo-100 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-okta-midnight mb-2 flex items-center gap-2">
+                                <span class="text-indigo-600">🔐</span> Okta Identity Governance (OIG)
+                            </h4>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                Okta's governance solution for access reviews, certifications, and compliance workflows. Ideal for regulated industries.
+                            </p>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-4 border border-indigo-100 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-okta-midnight mb-2 flex items-center gap-2">
+                                <span class="text-indigo-600">♻️</span> Lifecycle Management (LCM)
+                            </h4>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                Automates user provisioning, deprovisioning, and updates across applications using SCIM or proprietary connectors.
+                            </p>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-4 border border-indigo-100 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-okta-midnight mb-2 flex items-center gap-2">
+                                <span class="text-indigo-600">🛡️</span> Okta Privileged Access (OPA)
+                            </h4>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                Secures privileged accounts with just-in-time access, session recording, and zero standing privileges for infrastructure.
+                            </p>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-4 border border-indigo-100 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-okta-midnight mb-2 flex items-center gap-2">
+                                <span class="text-indigo-600">📱</span> Device Trust
+                            </h4>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                Verifies device posture (OS version, encryption, etc.) before granting access. Part of zero trust security strategies.
+                            </p>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-4 border border-indigo-100 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-okta-midnight mb-2 flex items-center gap-2">
+                                <span class="text-indigo-600">🔄</span> SCIM (System for Cross-domain Identity Management)
+                            </h4>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                An open standard for automating user provisioning. Supported by most SaaS apps for seamless user management.
+                            </p>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-4 border border-indigo-100 hover:shadow-md transition-shadow">
+                            <h4 class="font-bold text-okta-midnight mb-2 flex items-center gap-2">
+                                <span class="text-indigo-600">🎯</span> Multi-Factor Authentication (MFA)
+                            </h4>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                Requires two or more verification factors (password + phone, biometric, etc.) to authenticate. Critical for security.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Pro Tips -->
+                    <div class="mt-8 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-lg p-6 border-l-4 border-indigo-600">
+                        <h3 class="font-bold text-okta-midnight mb-3 flex items-center gap-2">
+                            <i class="fas fa-lightbulb text-yellow-500"></i>
+                            Pro Tips for Using This Lab
+                        </h3>
+                        <ul class="space-y-2 text-sm text-slate-700">
+                            <li class="flex items-start gap-2">
+                                <span class="text-indigo-600 font-bold">→</span>
+                                <span><strong>Bookmark this page:</strong> Your progress is saved automatically in your browser's localStorage</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-indigo-600 font-bold">→</span>
+                                <span><strong>Work at your pace:</strong> You don't have to complete all labs in one session</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-indigo-600 font-bold">→</span>
+                                <span><strong>Copy code carefully:</strong> Use the copy buttons to avoid typos in prompts</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-indigo-600 font-bold">→</span>
+                                <span><strong>Ask questions:</strong> If something doesn't work, paste the error into Copilot Chat or Gemini</span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </section>
         </main>
