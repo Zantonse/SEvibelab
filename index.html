@@ -56,7 +56,7 @@
                 <!-- Logo Area -->
                 <div class="flex items-center gap-2 cursor-pointer" onclick="toggleView('main')">
                     <!-- Simple CSS Circle representing the 'O' -->
-                    <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-4 sm:border-[6px] border-okta-midnight"></div>
+                    <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-4 sm:border-[6px] border-okta-blue bg-okta-blue/10" style="border-color: #3C71F7;"></div>
                     <span class="font-bold text-base sm:text-xl tracking-tight text-okta-midnight">SE Vibe <span class="text-okta-blue">Lab</span><span class="hidden sm:inline"> Coding</span></span>
                 </div>
                 
@@ -84,11 +84,11 @@
         <div id="progress-strip" class="w-full bg-slate-50 border-b border-slate-200 py-1 transition-all duration-300 overflow-x-auto">
             <div class="page-shell flex justify-center text-[10px] sm:text-xs font-mono font-medium text-okta-gray whitespace-nowrap">
                 <span class="mr-1 sm:mr-2 hidden sm:inline">YOU'RE HERE:</span>
-                <span id="prog-1" class="text-okta-blue">① Canvas</span>
+                <span id="prog-1" class="text-okta-blue">① Gemini Canvas</span>
                 <span class="mx-1 sm:mx-2 text-slate-400">→</span>
-                <span id="prog-2" class="text-okta-blue">② Next.js</span>
+                <span id="prog-2" class="text-okta-blue">② Multi-File Split</span>
                 <span class="mx-1 sm:mx-2 text-slate-400">→</span>
-                <span id="prog-3" class="text-okta-blue">③ Copilot</span>
+                <span id="prog-3" class="text-okta-blue">③ VS Code Polish</span>
             </div>
         </div>
     </nav>
@@ -127,18 +127,18 @@
                 <div class="hero-grid w-full">
                     <div class="grid-card">
                         <p class="text-xs uppercase tracking-[0.2em] text-slate-400 mb-2">Phase 1</p>
-                        <h3 class="text-lg font-bold text-okta-midnight mb-2">Canvas → Concept</h3>
-                        <p class="text-sm text-slate-500">Architect the aesthetic with Gemini Canvas before you ever open a repo.</p>
+                        <h3 class="text-lg font-bold text-okta-midnight mb-2">Gemini Canvas → HTML</h3>
+                        <p class="text-sm text-slate-500">Draft the UI in Gemini Canvas, then export clean HTML/CSS/JS snippets.</p>
                     </div>
                     <div class="grid-card">
                         <p class="text-xs uppercase tracking-[0.2em] text-slate-400 mb-2">Phase 2</p>
-                        <h3 class="text-lg font-bold text-okta-midnight mb-2">Next.js → Reality</h3>
-                        <p class="text-sm text-slate-500">Transplant the generated UI into a typed codebase with reusable components.</p>
+                        <h3 class="text-lg font-bold text-okta-midnight mb-2">Split into Files</h3>
+                        <p class="text-sm text-slate-500">Move markup, styles, and scripts into separate files for clarity and reuse.</p>
                     </div>
                     <div class="grid-card">
                         <p class="text-xs uppercase tracking-[0.2em] text-slate-400 mb-2">Phase 3</p>
-                        <h3 class="text-lg font-bold text-okta-midnight mb-2">Copilot → Velocity</h3>
-                        <p class="text-sm text-slate-500">Use GitHub Copilot to refactor, wire APIs, and validate flows with Okta.</p>
+                        <h3 class="text-lg font-bold text-okta-midnight mb-2">VS Code Polish</h3>
+                        <p class="text-sm text-slate-500">Use Live Preview and Copilot to refine UX safely without extra tooling.</p>
                     </div>
                 </div>
             </div>
@@ -464,22 +464,26 @@ Return the complete HTML file.</code></pre>
 
                         <!-- Tab Controls -->
                         <div class="flex gap-4 border-b border-indigo-700 mb-6">
-                            <button onclick="switchTab('tab-workflow')" id="btn-workflow" class="pb-2 px-4 text-sm font-bold border-b-2 border-green-400 text-white transition-colors">The Vibe Workflow</button>
-                            <button onclick="switchTab('tab-api')" id="btn-api" class="pb-2 px-4 text-sm font-bold border-b-2 border-transparent text-indigo-300 hover:text-white transition-colors">The API Integration Rule</button>
+                            <button onclick="switchTab('tab-workflow')" id="btn-workflow" class="pb-2 px-4 text-sm font-bold border-b-2 border-green-400 text-white transition-colors">File Split Workflow</button>
+                            <button onclick="switchTab('tab-api')" id="btn-api" class="pb-2 px-4 text-sm font-bold border-b-2 border-transparent text-indigo-300 hover:text-white transition-colors">Polish & Preview</button>
                         </div>
 
                         <!-- Tab Content: Workflow -->
                         <div id="tab-workflow" class="grid md:grid-cols-2 gap-12">
                             <div>
-                                <h3 class="font-bold text-indigo-200 mb-4">How to move from Prototype to Production</h3>
+                                <h3 class="font-bold text-indigo-200 mb-4">Move safely from Canvas to local files</h3>
                                 <ol class="space-y-6 relative border-l-2 border-indigo-700 ml-3 pl-8">
                                     <li class="relative">
-                                        <strong class="block text-lg mb-1">1. Architect in Canvas</strong>
-                                        <span class="text-indigo-300 text-sm leading-relaxed block">Don't struggle with syntax in VS Code. Use Gemini Canvas to generate the logic, UI components, and TypeScript interfaces first where it's cheap to iterate.</span>
+                                        <strong class="block text-lg mb-1">1. Start in Gemini</strong>
+                                        <span class="text-indigo-300 text-sm leading-relaxed block">Generate the UI in Gemini Canvas. Grab the plain HTML, CSS, and JS snippets (no frameworks required).</span>
                                     </li>
                                     <li class="relative">
-                                        <strong class="block text-lg mb-1">2. Transplant to VS Code</strong>
-                                        <span class="text-indigo-300 text-sm leading-relaxed block">Copy the polished code block. Navigate to your project folder (e.g., <code class="bg-indigo-800 px-1 rounded text-xs font-mono">app/components/</code>) and paste it into a real file. This "locks in" the feature.</span>
+                                        <strong class="block text-lg mb-1">2. Split the files</strong>
+                                        <span class="text-indigo-300 text-sm leading-relaxed block">Paste structure into <code class="bg-indigo-800 px-1 rounded text-xs font-mono">index.html</code>, styles into <code class="bg-indigo-800 px-1 rounded text-xs font-mono">css/main.css</code>, and behavior into <code class="bg-indigo-800 px-1 rounded text-xs font-mono">js/main.js</code>.</span>
+                                    </li>
+                                    <li class="relative">
+                                        <strong class="block text-lg mb-1">3. Wire assets</strong>
+                                        <span class="text-indigo-300 text-sm leading-relaxed block">Update script/link tags so the new files load. Keep secrets out of the browser; this lab stays front-end only.</span>
                                     </li>
                                 </ol>
                             </div>
@@ -488,51 +492,30 @@ Return the complete HTML file.</code></pre>
                             </div>
                         </div>
 
-                        <!-- Tab Content: API Rule -->
+                        <!-- Tab Content: Polish & Preview -->
                         <div id="tab-api" class="hidden">
-                            <div class="bg-indigo-950/50 p-6 rounded-xl border border-indigo-800">
+                            <div class="bg-indigo-950/50 p-6 rounded-xl border border-indigo-800 space-y-4">
                                 <h3 class="font-bold text-indigo-200 mb-4 flex items-center gap-2">
-                                    <i class="fas fa-shield-alt text-green-400"></i> Why can't I just fetch() in the browser?
+                                    <i class="fas fa-magic text-green-400"></i> Finish in VS Code
                                 </h3>
-                                
-                                <div class="space-y-6">
-                                    <!-- Concept 1: The CORS Guard -->
-                                    <div>
-                                        <h4 class="text-white font-bold text-sm mb-2">1. The Browser's Security Guard (CORS)</h4>
-                                        <p class="text-sm text-indigo-300 leading-relaxed mb-2">
-                                            Browsers enforce a strict rule called <strong>Same-Origin Policy</strong>. If your app is on <code>localhost:3000</code> and tries to talk to <code>okta.com</code>, the browser sees a stranger and blocks the call to prevent data theft.
-                                        </p>
-                                        <div class="bg-black/40 p-3 rounded-lg border border-red-900/50 font-mono text-xs text-red-300">
-                                            🚫 Blocked: Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource.
-                                        </div>
-                                    </div>
-
-                                    <!-- Concept 2: The Glass House -->
-                                    <div>
-                                        <h4 class="text-white font-bold text-sm mb-2">2. The "Glass House" Problem</h4>
-                                        <p class="text-sm text-indigo-300 leading-relaxed">
-                                            Anything running in the browser (Client Components) is visible to the user. If you put your <code>API_TOKEN</code> in a standard React component, any user can right-click "View Source" and steal your Super Admin credentials. <strong>Never do this.</strong>
-                                        </p>
-                                    </div>
-
-                                    <!-- Concept 3: The Server Solution -->
-                                    <div>
-                                        <h4 class="text-white font-bold text-sm mb-2">3. The Solution: Server Actions</h4>
-                                        <p class="text-sm text-indigo-300 leading-relaxed mb-3">
-                                            We use Next.js <strong>Server Actions</strong> to act as a secure proxy.
-                                        </p>
-                                        <ul class="space-y-2">
-                                            <li class="flex items-start gap-3 text-xs text-indigo-200 bg-indigo-900/50 p-2 rounded">
-                                                <i class="fas fa-check-circle text-green-400 mt-0.5"></i>
-                                                <span><strong>Browser talks to Server:</strong> Your frontend asks your <em>own</em> Next.js server to "Create User". This is allowed (Same Origin).</span>
-                                            </li>
-                                            <li class="flex items-start gap-3 text-xs text-indigo-200 bg-indigo-900/50 p-2 rounded">
-                                                <i class="fas fa-check-circle text-green-400 mt-0.5"></i>
-                                                <span><strong>Server talks to Okta:</strong> Your Next.js server (running in a secure backend) uses the hidden API Token to call Okta. Servers don't have CORS restrictions.</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
+                                <ul class="space-y-3 text-sm text-indigo-200">
+                                    <li class="flex items-start gap-3">
+                                        <i class="fas fa-desktop mt-0.5 text-green-300"></i>
+                                        <span><strong>Live Preview:</strong> Open <code class="bg-indigo-800 px-1 rounded text-xs font-mono">index.html</code> with the Live Preview extension to see changes instantly.</span>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <i class="fas fa-bug mt-0.5 text-yellow-300"></i>
+                                        <span><strong>Console check:</strong> Fix any missing file references or typos before polishing UI.</span>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <i class="fas fa-robot mt-0.5 text-blue-300"></i>
+                                        <span><strong>Copilot assist:</strong> Ask Copilot to tidy spacing, add hover states, or refactor JS for readability.</span>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <i class="fas fa-save mt-0.5 text-purple-300"></i>
+                                        <span><strong>Progress:</strong> Keep this page bookmarked—your checklist progress stays in localStorage.</span>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -954,7 +937,7 @@ Return THREE separate code blocks labeled:
                                             Step 3 – Super Prompt: Logic & UI
                                         </p>
                                         <p class="mb-1 text-purple-300">
-                                            Now run <strong>Super Prompt 2</strong> to generate the Server Actions and UI.
+                                            Now run <strong>Super Prompt 2</strong> to generate the logic and UI.
                                         </p>
                                         <ul class="list-disc list-inside space-y-1 text-purple-200">
                                             <li>Confirm it creates <code class="bg-purple-800 px-1 rounded font-mono">app/actions/userActions.ts</code>
@@ -1404,9 +1387,10 @@ Return THREE separate code blocks labeled:
                     <div>
                         <h3 class="text-white font-bold text-lg mb-4">Resources</h3>
                         <ul class="space-y-2 text-slate-400 text-sm">
-                            <li><a href="#" class="hover:text-white transition-colors">Next.js Documentation</a></li>
-                            <li><a href="#" class="hover:text-white transition-colors">Tailwind CSS Cheatsheet</a></li>
-                            <li><a href="#" class="hover:text-white transition-colors">Gemini Prompting Guide</a></li>
+                            <li><a href="https://gemini.google.com" target="_blank" class="hover:text-white transition-colors">Gemini Web Chat</a></li>
+                            <li><a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.live-server" target="_blank" class="hover:text-white transition-colors">Live Preview Extension</a></li>
+                            <li><a href="https://marketplace.visualstudio.com/items?itemName=GitHub.copilot" target="_blank" class="hover:text-white transition-colors">GitHub Copilot</a></li>
+                            <li><a href="concepts.html" class="hover:text-white transition-colors">Concepts Guide (file structure, prompts)</a></li>
                         </ul>
                     </div>
                     <div class="text-slate-500 text-xs">
@@ -1420,298 +1404,41 @@ Return THREE separate code blocks labeled:
 
     <!-- VIEW: Prerequisites Content -->
     <div id="prereqs-view" class="hidden min-h-screen bg-slate-50">
-    <div class="page-shell py-12">
-            <div class="mb-12">
-                <button onclick="toggleView('main')" class="text-slate-500 hover:text-slate-900 mb-6 flex items-center gap-2 transition-colors font-semibold">
-                    <i class="fas fa-arrow-left"></i> Back to Lab
-                </button>
-                <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight mb-4">Pre-Flight <span class="text-blue-600">Checklist</span></h1>
-                <p class="text-xl text-slate-600">Ensure your development environment is primed before starting the workshop.</p>
-            </div>
-
-            <!-- Checklist Grid -->
-            <div class="grid gap-8">
-                <!-- Core Tools -->
-                <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-card">
-                    <h2 class="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-                        <i class="fas fa-box-open text-blue-600"></i> Core Tools
-                    </h2>
-                    <ul class="space-y-4">
-                        <li class="flex items-start gap-4 p-4 bg-slate-50 rounded-lg border border-slate-100">
-                            <div class="mt-1 text-green-500"><i class="fas fa-check-circle"></i></div>
-                            <div>
-                                <h3 class="text-slate-900 font-bold">VS Code</h3>
-                                <p class="text-sm text-slate-600 mb-2">The command center. Ensure you are on the latest version.</p>
-                                <div class="bg-slate-800 p-2 rounded text-xs font-mono text-white inline-block">code --version</div>
-                            </div>
-                        </li>
-                        <li class="flex items-start gap-4 p-4 bg-slate-50 rounded-lg border border-slate-100">
-                            <div class="mt-1 text-green-500"><i class="fas fa-check-circle"></i></div>
-                            <div>
-                                <h3 class="text-slate-900 font-bold">Node.js (LTS) & NPM</h3>
-                                <p class="text-sm text-slate-600 mb-2">Required for Next.js. Version 18.17.0 or later is strictly required.</p>
-                                <div class="bg-slate-800 p-2 rounded text-xs font-mono text-white inline-block">node -v && npm -v</div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Package Managers -->
-                <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-card">
-                    <h2 class="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-                        <i class="fas fa-terminal text-blue-600"></i> Package Management
-                    </h2>
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-100">
-                            <h3 class="text-slate-900 font-bold mb-2"><i class="fab fa-apple mr-2"></i>macOS / Linux</h3>
-                            <p class="text-sm text-slate-600 mb-3">Homebrew is essential for managing dependencies.</p>
-                            <code class="block bg-slate-800 p-3 rounded text-xs font-mono text-green-400 select-all overflow-x-auto">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code>
-                        </div>
-                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-100">
-                            <h3 class="text-slate-900 font-bold mb-2"><i class="fab fa-windows mr-2"></i>Windows</h3>
-                            <p class="text-sm text-slate-600 mb-3">Recommend using Winget or Chocolatey.</p>
-                            <code class="block bg-slate-800 p-3 rounded text-xs font-mono text-green-400 select-all overflow-x-auto">winget install -e --id Microsoft.VisualStudioCode</code>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Extensions -->
-                <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-card">
-                    <h2 class="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-                        <i class="fas fa-puzzle-piece text-purple-600"></i> VS Code Extensions
-                    </h2>
-                    <p class="text-sm text-slate-600 mb-4">Install these to enable syntax highlighting and formatting for the Vibe Stack.</p>
-                    <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        <div class="p-3 border border-slate-200 rounded bg-slate-50 text-center hover:border-blue-500 hover:text-blue-600 transition-colors group">
-                            <span class="block font-bold text-slate-900 group-hover:text-blue-600">ESLint</span>
-                            <span class="text-xs text-slate-500">Linting</span>
-                        </div>
-                        <div class="p-3 border border-slate-200 rounded bg-slate-50 text-center hover:border-blue-500 hover:text-blue-600 transition-colors group">
-                            <span class="block font-bold text-slate-900 group-hover:text-blue-600">Prettier</span>
-                            <span class="text-xs text-slate-500">Formatting</span>
-                        </div>
-                        <div class="p-3 border border-slate-200 rounded bg-slate-50 text-center hover:border-blue-500 hover:text-blue-600 transition-colors group">
-                            <span class="block font-bold text-slate-900 group-hover:text-blue-600">Tailwind CSS</span>
-                            <span class="text-xs text-slate-500">IntelliSense</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div class="page-shell py-12">
+        <div class="mb-10">
+          <button onclick="toggleView('main')" class="text-slate-500 hover:text-slate-900 mb-6 flex items-center gap-2 transition-colors font-semibold">
+            <i class="fas fa-arrow-left"></i> Back to Lab
+          </button>
+          <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Prerequisites</h1>
+          <p class="text-slate-600">We simplified setup. Open the dedicated page for the latest checklist.</p>
         </div>
+        <div class="section-shell text-center">
+          <h2 class="text-2xl font-bold text-okta-midnight mb-3">View the full setup guide</h2>
+          <p class="text-slate-600 mb-6">Browser + VS Code + Gemini (free) + Live Preview extension. That's it.</p>
+          <div class="flex justify-center gap-3 flex-wrap">
+            <a href="prerequisites.html" class="bg-blue-600 text-white px-5 py-3 rounded-lg font-semibold shadow-lg hover:bg-blue-700 transition-colors">Open Prerequisites Page</a>
+            <a href="concepts.html" class="bg-white text-okta-midnight px-5 py-3 rounded-lg font-semibold border border-slate-200 hover:bg-slate-50 transition-colors">Open Concepts Page</a>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- VIEW: Concepts Guide -->
     <div id="concepts-view" class="hidden min-h-screen bg-slate-50">
-    <div class="page-shell py-12">
-            <div class="mb-12">
-                <button onclick="toggleView('main')" class="text-slate-500 hover:text-slate-900 mb-6 flex items-center gap-2 transition-colors font-semibold">
-                    <i class="fas fa-arrow-left"></i> Back to Lab
-                </button>
-                <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight mb-4">Concepts <span class="text-blue-600">Guide</span></h1>
-                <p class="text-xl text-slate-600">The "Why" behind the "What". Understanding the architecture of your toolkit.</p>
-            </div>
-
-            <!-- Architecture Diagram -->
-            <div class="bg-white rounded-xl border border-slate-200 p-8 shadow-card mb-8">
-                <h2 class="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-                    <i class="fas fa-sitemap text-purple-500"></i> The Architecture
-                </h2>
-                <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-center">
-                    
-                    <!-- Client -->
-                    <div class="p-4 bg-blue-50 rounded-lg border border-blue-100 w-full md:w-1/3">
-                        <div class="text-3xl mb-2">💻</div>
-                        <h3 class="font-bold text-slate-900">Client (Browser)</h3>
-                        <p class="text-xs text-slate-600 mt-2">Your Dashboard UI. Runs React components.</p>
-                        <div class="mt-3 text-xs font-mono bg-white p-1 rounded text-red-500 border border-red-200">
-                            🚫 Cannot call Okta API (CORS)
-                        </div>
-                    </div>
-
-                    <!-- Arrow -->
-                    <div class="text-slate-300 text-2xl hidden md:block">
-                        <i class="fas fa-exchange-alt"></i>
-                    </div>
-                    <div class="text-slate-300 text-2xl md:hidden">
-                        <i class="fas fa-arrow-down"></i>
-                    </div>
-
-                    <!-- Server -->
-                    <div class="p-4 bg-green-50 rounded-lg border border-green-100 w-full md:w-1/3">
-                        <div class="text-3xl mb-2">⚙️</div>
-                        <h3 class="font-bold text-slate-900">Next.js Server</h3>
-                        <p class="text-xs text-slate-600 mt-2">Runs Server Actions. Hides API Token.</p>
-                        <div class="mt-3 text-xs font-mono bg-white p-1 rounded text-green-600 border border-green-200">
-                            ✅ Proxy for API Calls
-                        </div>
-                    </div>
-
-                    <!-- Arrow -->
-                    <div class="text-slate-300 text-2xl hidden md:block">
-                        <i class="fas fa-exchange-alt"></i>
-                    </div>
-                    <div class="text-slate-300 text-2xl md:hidden">
-                        <i class="fas fa-arrow-down"></i>
-                    </div>
-
-                    <!-- Okta -->
-                    <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 w-full md:w-1/3">
-                        <div class="text-3xl mb-2">☁️</div>
-                        <h3 class="font-bold text-slate-900">Okta API</h3>
-                        <p class="text-xs text-slate-600 mt-2">The Source of Truth.</p>
-                        <div class="mt-3 text-xs font-mono bg-white p-1 rounded text-slate-500 border border-slate-200">
-                            /api/v1/users
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- NEW: CORS Deep Dive -->
-            <div class="bg-white rounded-xl border border-slate-200 p-8 shadow-card mb-8">
-                <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                    <i class="fas fa-shield-alt text-red-500"></i> Deep Dive: What is CORS?
-                </h2>
-                <div class="grid md:grid-cols-2 gap-12">
-                    <div class="bg-slate-50 p-5 rounded-xl border border-slate-100">
-                        <h3 class="font-bold text-sm text-slate-900 mb-3 flex items-center gap-2">
-                            <i class="fas fa-user-secret text-slate-400"></i> The Analogy: The ID Badge
-                        </h3>
-                        <p class="text-sm text-slate-600 leading-relaxed">
-                            Imagine your browser is a strict security guard at an office building (Your App). You try to send a messenger to a completely different building across the street (Okta).
-                            <br><br>
-                            The security guard stops the messenger at the door because their ID badge says <strong>"Localhost"</strong>, but the other building only accepts badges from <strong>"Trusted Partners"</strong>.
-                        </p>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-sm text-slate-900 mb-3">The Technical Reality</h3>
-                        <p class="text-sm text-slate-600 leading-relaxed mb-4">
-                            <strong>CORS (Cross-Origin Resource Sharing)</strong> is a browser security feature. It exists to prevent a malicious website (e.g., <code>evil.com</code>) from making background API calls to your bank (e.g., <code>bank.com</code>) using your logged-in session.
-                        </p>
-                        <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-r text-xs text-red-800">
-                            <strong>Why it affects this Lab:</strong> <br>
-                            Okta's Management API is secure by default. It doesn't know about your local development environment (<code>localhost:3000</code>), so if the browser tries to call it directly, Okta blocks it.
-                            <br><br>
-                            <strong>The Fix:</strong> We move the request to the <strong>Next.js Server</strong> (Server Actions). Servers do not have CORS restrictions, so they can pass the request safely.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-8">
-                <!-- Tech Stack -->
-                <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-card">
-                    <h2 class="text-xl font-bold text-slate-900 mb-4">The Tech Stack (The Tools)</h2>
-                    <div class="space-y-6">
-                        <div class="border-l-4 border-blue-500 pl-4">
-                            <h3 class="font-bold text-sm text-slate-900">Next.js (The Framework)</h3>
-                            <p class="text-xs text-slate-600 mt-1">
-                                <strong>What:</strong> A production framework built on top of React. <br>
-                                <strong>Why:</strong> It handles the "boring stuff" like routing (URLs) and backend API proxies automatically. It lets us build a full-stack app in one folder without setting up a separate backend server.
-                            </p>
-                        </div>
-                        <div class="border-l-4 border-blue-400 pl-4">
-                            <h3 class="font-bold text-sm text-slate-900">TypeScript (The Safety Net)</h3>
-                            <p class="text-xs text-slate-600 mt-1">
-                                <strong>What:</strong> JavaScript with strict rules. <br>
-                                <strong>Why:</strong> It prevents bugs before they happen. If you try to access <code>user.firsName</code> (typo), TypeScript yells at you in the editor so you don't break the app during a demo.
-                            </p>
-                        </div>
-                        <div class="border-l-4 border-teal-400 pl-4">
-                            <h3 class="font-bold text-sm text-slate-900">Tailwind CSS (The Stylist)</h3>
-                            <p class="text-xs text-slate-600 mt-1">
-                                <strong>What:</strong> A utility-first styling library. <br>
-                                <strong>Why:</strong> Instead of writing a separate CSS file to center a box, you just write <code>class="flex justify-center"</code>. It speeds up UI building by 10x.
-                            </p>
-                        </div>
-                        <div class="border-l-4 border-red-400 pl-4">
-                            <h3 class="font-bold text-sm text-slate-900">NPM (The App Store)</h3>
-                            <p class="text-xs text-slate-600 mt-1">
-                                <strong>What:</strong> Node Package Manager. <br>
-                                <strong>Why:</strong> It allows us to download pre-written code (libraries) like the Okta SDK or icon sets so we don't have to reinvent the wheel.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Directory Map -->
-                <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-card">
-                    <h2 class="text-xl font-bold text-slate-900 mb-4">Project Map (Where things live)</h2>
-                    <ul class="space-y-4 font-mono text-xs">
-                        <li class="flex items-start gap-3">
-                            <div class="bg-yellow-100 p-1.5 rounded text-yellow-600"><i class="fas fa-folder"></i></div>
-                            <div>
-                                <span class="font-bold text-slate-700 block text-sm">app/</span>
-                                <span class="text-slate-500">The heart of the app. This folder <em>is</em> your router.</span>
-                            </div>
-                        </li>
-                        <li class="flex items-start gap-3 pl-4 border-l border-slate-200 ml-3">
-                            <div class="bg-blue-50 p-1.5 rounded text-blue-500"><i class="fas fa-file-code"></i></div>
-                            <div>
-                                <span class="font-bold text-slate-700 block">page.tsx</span>
-                                <span class="text-slate-500">The Home Page view (localhost:3000/). If you create <code>app/settings/page.tsx</code>, that becomes <code>/settings</code>.</span>
-                            </div>
-                        </li>
-                        <li class="flex items-start gap-3 pl-4 border-l border-slate-200 ml-3">
-                            <div class="bg-blue-50 p-1.5 rounded text-blue-500"><i class="fas fa-file-code"></i></div>
-                            <div>
-                                <span class="font-bold text-slate-700 block">layout.tsx</span>
-                                <span class="text-slate-500">The Wrapper. Code here (Navbar, Footer) appears on <em>every</em> page automatically.</span>
-                            </div>
-                        </li>
-                        <li class="flex items-start gap-3 pl-4 border-l border-slate-200 ml-3">
-                            <div class="bg-pink-50 p-1.5 rounded text-pink-500"><i class="fab fa-css3-alt"></i></div>
-                            <div>
-                                <span class="font-bold text-slate-700 block">globals.css</span>
-                                <span class="text-slate-500">Global styles. This is where Tailwind is imported and where you set root font sizes.</span>
-                            </div>
-                        </li>
-                        
-                        <li class="flex items-start gap-3 mt-4">
-                            <div class="bg-purple-100 p-1.5 rounded text-purple-600"><i class="fas fa-server"></i></div>
-                            <div>
-                                <span class="font-bold text-slate-700 block text-sm">app/actions/</span>
-                                <span class="text-slate-500"><strong>Server Actions.</strong> Functions that run on the server to securely call Okta APIs. This is where we put the Okta API calls so the browser never sees the API Token.</span>
-                            </div>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <div class="bg-green-100 p-1.5 rounded text-green-600"><i class="fas fa-cubes"></i></div>
-                            <div>
-                                <span class="font-bold text-slate-700 block text-sm">app/components/</span>
-                                <span class="text-slate-500"><strong>UI Components.</strong> Reusable Lego bricks like <code>&lt;Button /&gt;</code> or <code>&lt;Card /&gt;</code> that we import into pages.</span>
-                            </div>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <div class="bg-purple-500 p-1.5 rounded text-white"><i class="fas fa-code"></i></div>
-                            <div>
-                                <span class="font-bold text-slate-700 block text-sm">app/types/</span>
-                                <span class="text-slate-500"><strong>Interfaces.</strong> Definitions of what data looks like (e.g., what an <code>OktaConfig</code> object contains).</span>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- New Section: Coding Concepts -->
-            <div class="mt-8 bg-white rounded-xl border border-slate-200 p-8 shadow-card">
-                <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                    <i class="fas fa-brain text-orange-500"></i> Coding Concepts for SEs
-                </h2>
-                <div class="grid md:grid-cols-3 gap-6">
-                    <div class="p-4 bg-slate-50 rounded-lg">
-                        <h3 class="font-bold text-slate-900 mb-2 text-sm">React Components</h3>
-                        <p class="text-xs text-slate-600">Think of these as <strong>Custom HTML Tags</strong>. Instead of writing 20 lines of HTML for a user card, you write <code>&lt;UserCard name="Alice" /&gt;</code>. It makes code readable and reusable.</p>
-                    </div>
-                    <div class="p-4 bg-slate-50 rounded-lg">
-                        <h3 class="font-bold text-slate-900 mb-2 text-sm">Props (Properties)</h3>
-                        <p class="text-xs text-slate-600">The <strong>Arguments</strong> passed to a component. In <code>&lt;UserCard name="Alice" /&gt;</code>, "name" is a prop. It allows the same component to display different data.</p>
-                    </div>
-                    <div class="p-4 bg-slate-50 rounded-lg">
-                        <h3 class="font-bold text-slate-900 mb-2 text-sm">State (useState)</h3>
-                        <p class="text-xs text-slate-600">The component's <strong>Short-term Memory</strong>. If you type in a text box or toggle a switch, that data is stored in "State". When State changes, the screen updates automatically.</p>
-                    </div>
-                </div>
-            </div>
+      <div class="page-shell py-12">
+        <div class="mb-10">
+          <button onclick="toggleView('main')" class="text-slate-500 hover:text-slate-900 mb-6 flex items-center gap-2 transition-colors font-semibold">
+            <i class="fas fa-arrow-left"></i> Back to Lab
+          </button>
+          <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Concepts Guide</h1>
+          <p class="text-slate-600">Learn why we separate files, how to prompt effectively, and how to use localStorage.</p>
         </div>
+        <div class="section-shell text-center">
+          <h2 class="text-2xl font-bold text-okta-midnight mb-3">View the full concepts guide</h2>
+          <p class="text-slate-600 mb-6">Covers file structure, DOM/events, localStorage, and prompt engineering tips tailored for these labs.</p>
+          <a href="concepts.html" class="bg-blue-600 text-white px-5 py-3 rounded-lg font-semibold shadow-lg hover:bg-blue-700 transition-colors">Open Concepts Page</a>
+        </div>
+      </div>
     </div>
 
     <!-- Scripts -->
